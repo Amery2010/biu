@@ -9,12 +9,17 @@ const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'
 program.version(pkg.version)
 
 program
-  .command('deploy <env>')
+  .command('deploy [env]')
   .alias('dp')
   .description('project deployment command')
   .option('-d, --date [tpl]', 'tag date format', 'MMDDHHmm')
+  .option('--init <url>', 'git upstream url')
   .action((env, options) => {
-    deploy(env, options.date)
+    if (options.init) {
+      deploy.init(options.init)
+    } else {
+      deploy.run(env, options.date)
+    }
   })
 
 program.parse(process.argv)

@@ -14,6 +14,12 @@ function getDateString(tpl?: string): string {
   return dayjs().format(tpl)
 }
 
+function init(url: string): void {
+  shelljs.echo('Biu: start to initialize the project branch...')
+  shelljs.exec(`git remote add upstream ${url}`)
+  shelljs.echo(chalk.success('Biu: the upstream remote is added successfully'))
+}
+
 /**
  * deployment project
  * @param env deployment environment, limited to `develop`, `release` and `production`, alias `dev`, `rc` and `prod`.
@@ -72,4 +78,7 @@ async function deploy(env: EnvType, dateTpl?: string): Promise<void> {
   }
 }
 
-export default deploy
+export default {
+  init,
+  run: deploy,
+}
