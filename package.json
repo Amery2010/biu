@@ -1,0 +1,80 @@
+{
+  "name": "biu",
+  "version": "0.1.0",
+  "description": "Biu is a script tool library for quick instructions.",
+  "main": "lib/main.js",
+  "types": "lib/main.d.ts",
+  "sideEffects": false,
+  "repository": "git@gitlab.jiliguala.com:amery/biu.git",
+  "author": "Amery <amery@xiangfa.org>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "watch": "tsc -w",
+    "lint": "eslint ./src --fix --ext .ts",
+    "build": "rimraf ./lib && tsc"
+  },
+  "bin": {
+    "biu": "lib/main.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^6.2.0",
+    "dayjs": "^1.9.6",
+    "inquirer": "^7.3.3",
+    "shelljs": "^0.8.4"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^7.3.1",
+    "@types/node": "^14.14.7",
+    "@types/shelljs": "^0.8.8",
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.5.1",
+    "prettier": "^2.1.2",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.0.5"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.ts"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "extends": [
+          "plugin:@typescript-eslint/recommended"
+        ],
+        "plugins": [
+          "@typescript-eslint"
+        ],
+        "rules": {
+          "@typescript-eslint/no-explicit-any": 0
+        }
+      }
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "rimraf ./lib && tsc"
+    ]
+  }
+}
