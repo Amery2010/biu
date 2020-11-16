@@ -1,6 +1,6 @@
 {
   "name": "biu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Biu is a script tool library for quick instructions.",
   "main": "lib/main.js",
   "types": "lib/main.d.ts",
@@ -15,14 +15,15 @@
     "build": "rimraf ./lib && tsc"
   },
   "bin": {
-    "biu": "lib/main.js"
+    "biu": "./lib/main.js"
   },
   "dependencies": {
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "dayjs": "^1.9.6",
     "inquirer": "^7.3.3",
-    "shelljs": "^0.8.4"
+    "shelljs": "^0.8.4",
+    "tslib": "^2.0.3"
   },
   "devDependencies": {
     "@types/inquirer": "^7.3.1",
