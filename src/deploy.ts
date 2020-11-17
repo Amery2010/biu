@@ -95,16 +95,16 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
         const confirm = await prompt([
           {
             type: 'list',
-            name: 'deployType',
+            name: 'type',
             message: 'Please select the environment you want to deploy.',
             choices: ['develop', 'release', 'production', 'exit'],
             default: 'develop',
           },
         ])
-        if (confirm.deployType === 'exit') {
+        if (confirm.type === 'exit') {
           shelljs.exit()
         } else {
-          deploy(confirm.deployType, dateTpl, version)
+          deploy(confirm.type, dateTpl, version)
         }
       }
       break

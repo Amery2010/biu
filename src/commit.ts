@@ -28,7 +28,7 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
   const commitMessage = generateCommitMessage(message, type, scope)
   if (commitMessage) {
     shelljs.exec('git add .')
-    shelljs.exec(`git commit -m ${commitMessage}`)
+    shelljs.exec(`git commit -m '${commitMessage}'`)
     shelljs.echo(chalk.success('Biu: commit message success'))
   } else {
     const choices: string[] = []
@@ -55,7 +55,8 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
       },
     ])
     if (confirm.message) {
-      commit(confirm.message, confirm.type, confirm.scope)
+      const commitType = confirm.type.split(' ')[0]
+      commit(confirm.message, commitType, confirm.scope)
     } else {
       shelljs.echo(chalk.error('Biu: commit message is required!'))
     }

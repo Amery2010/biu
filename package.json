@@ -77,8 +77,7 @@
   "lint-staged": {
     "*.ts": [
       "prettier --write",
-      "rimraf ./lib && tsc",
-      "git add"
+      "rimraf ./lib && tsc"
     ]
   }
 }
