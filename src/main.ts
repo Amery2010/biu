@@ -13,12 +13,13 @@ program
   .alias('dp')
   .description('project deployment command')
   .option('-d, --date [tpl]', 'tag date format', 'MMDDHHmm')
+  .option('-v <version>', 'project version')
   .option('--init <url>', 'git upstream url')
   .action((env, options) => {
     if (options.init) {
       deploy.init(options.init)
     } else {
-      deploy.run(env, options.date)
+      deploy.run(env, options.date, options.v)
     }
   })
 

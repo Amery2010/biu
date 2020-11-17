@@ -14,6 +14,10 @@ function getDateString(tpl?: string): string {
   return dayjs().format(tpl)
 }
 
+function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: string): string {
+  return `deploys/${env}/${version ? `v${version}_` : ''}${getDateString(dateTpl)}`
+}
+
 function init(url: string): void {
   shelljs.echo('Biu: start to initialize the project branch...')
   shelljs.exec(`git remote add upstream ${url}`)
@@ -25,12 +29,12 @@ function init(url: string): void {
  * @param env deployment environment, limited to `develop`, `release` and `production`, alias `dev`, `rc` and `prod`.
  * @param dateTpl tag date format template
  */
-async function deploy(env: EnvType, dateTpl?: string): Promise<void> {
+async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void> {
   let tagName = ''
   switch (env) {
     case 'dev':
     case 'develop':
-      tagName = `deploys/dev/${getDateString(dateTpl)}`
+      tagName = getTagString('dev', dateTpl, version)
       shelljs.echo('Biu: push tag to upstream...')
       shelljs.exec(`git tag ${tagName} -m 'build: Deploy to development environment'`)
       shelljs.exec(`git push upstream ${tagName}`)
@@ -38,7 +42,7 @@ async function deploy(env: EnvType, dateTpl?: string): Promise<void> {
       break
     case 'rc':
     case 'release':
-      tagName = `deploys/rc/${getDateString(dateTpl)}`
+      tagName = getTagString('rc', dateTpl, version)
       shelljs.echo('Biu: pull upstream master branch...')
       shelljs.exec('git fetch upstream develop')
       shelljs.exec('git checkout -b develop upstream/develop')
@@ -59,7 +63,7 @@ async function deploy(env: EnvType, dateTpl?: string): Promise<void> {
         },
       ])
       if (confirm.deployConfirm) {
-        tagName = `deploys/prod/${getDateString(dateTpl)}`
+        tagName = getTagString('prod', dateTpl, version)
         shelljs.echo('Biu: pull upstream master branch...')
         shelljs.exec('git fetch upstream master')
         shelljs.exec('git checkout -b master upstream/master')

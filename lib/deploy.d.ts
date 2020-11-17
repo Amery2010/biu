@@ -5,7 +5,7 @@ declare function init(url: string): void;
  * @param env deployment environment, limited to `develop`, `release` and `production`, alias `dev`, `rc` and `prod`.
  * @param dateTpl tag date format template
  */
-declare function deploy(env: EnvType, dateTpl?: string): Promise<void>;
+declare function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void>;
 declare const _default: {
     init: typeof init;
     run: typeof deploy;
