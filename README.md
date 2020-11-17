@@ -26,6 +26,8 @@ biu dp dev --date YYMMDDHHmm
 biu dp dev -d YYMMDDHHmm
 ```
 
+注：date 的时间格式内部使用 dayjs 进行格式化，因此你可以参考 [dayjs 时间格式化文档](https://dayjs.gitee.io/docs/zh-CN/display/format)。
+
 部署命令支持给部署 `Tag` 加上版本号，如 `deploys/prod/v3.4_11171033`。具体用法如下：
 
 ```shell

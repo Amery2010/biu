@@ -14,12 +14,23 @@ function getDateString(tpl?: string): string {
   return dayjs().format(tpl)
 }
 
+/**
+ * get tag string
+ * @param env deployment environment, limited to `dev`, `rc` and `prod`
+ * @param dateTpl tag date format template
+ * @param version project version
+ * @returns tag string
+ */
 function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: string): string {
   return `deploys/${env}/${version ? `v${version}_` : ''}${getDateString(dateTpl)}`
 }
 
+/**
+ * initialize the project upstream
+ * @param url project upstream url
+ */
 function init(url: string): void {
-  shelljs.echo('Biu: start to initialize the project branch...')
+  shelljs.echo('Biu: start to initialize the project upstream...')
   shelljs.exec(`git remote add upstream ${url}`)
   shelljs.echo(chalk.success('Biu: the upstream remote is added successfully'))
 }
@@ -28,6 +39,7 @@ function init(url: string): void {
  * deployment project
  * @param env deployment environment, limited to `develop`, `release` and `production`, alias `dev`, `rc` and `prod`.
  * @param dateTpl tag date format template
+ * @param version project version
  */
 async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void> {
   let tagName = ''
