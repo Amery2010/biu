@@ -89,7 +89,24 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
       }
       break
     default:
-      shelljs.echo(chalk.error(`Unknown env: ${env}`))
+      if (env) {
+        shelljs.echo(chalk.error(`Unknown env: ${env}`))
+      } else {
+        const confirm = await prompt([
+          {
+            type: 'list',
+            name: 'deployType',
+            message: 'Please select the environment you want to deploy.',
+            choices: ['develop', 'release', 'production', 'exit'],
+            default: 'develop',
+          },
+        ])
+        if (confirm.deployType === 'exit') {
+          shelljs.exit()
+        } else {
+          deploy(confirm.deployType, dateTpl, version)
+        }
+      }
       break
   }
 }
