@@ -90,7 +90,7 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
       break
     default:
       if (env) {
-        shelljs.echo(chalk.error(`Unknown env: ${env}`))
+        shelljs.echo(chalk.error(`Biu: Unknown env ${env}`))
       } else {
         const confirm = await prompt([
           {
