@@ -33,3 +33,7 @@ biu dp dev -v 3.4
 # Or
 biu dp dev -d DDHHmm -v 3.3
 ```
+
+### 初始化远端仓库
+
+部分项目可能一开始没有设置 `upstream` 远端仓库，而该脚本部分命令会涉及远端数据同步，你可以通过 `biu dp --init <url>` 来初始化远端仓库。
