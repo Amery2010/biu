@@ -29,6 +29,7 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
   if (commitMessage) {
     shelljs.exec('git add .')
     shelljs.exec(`git commit -m '${commitMessage}'`)
+    shelljs.exec('git push origin')
     shelljs.echo(chalk.success('Biu: commit message success'))
   } else {
     const choices: string[] = []

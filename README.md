@@ -8,6 +8,11 @@ yarn global add https://gitlab.jiliguala.com/npm/biu.git
 npm i -g https://gitlab.jiliguala.com/npm/biu.git
 ```
 
+### 获取指令帮助信息
+
+你可以通过 `biu -h` 获取 biu 工具目前支持的所有脚本命令。  
+你可以通过 `biu help [command]` 获取对应指令的帮助信息。
+
 ## 部署指令
 
 你可以使用 `biu deploy|dp [env]` 指令进行项目部署，其中 `env` 变量可以是 `dev | rc | prod | develop | release | production` 中的一种。具体用法如下：
