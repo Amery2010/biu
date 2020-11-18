@@ -1,6 +1,6 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
-import chalk from './helper/chalk'
+import chalk from '../helper/chalk'
 import dayjs from 'dayjs'
 
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
@@ -90,7 +90,7 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
       break
     default:
       if (env) {
-        shelljs.echo(chalk.error(`Biu: Unknown env ${env}`))
+        shelljs.echo(chalk.error(`Biu: Unknown env '${env}'`))
       } else {
         const confirm = await prompt([
           {

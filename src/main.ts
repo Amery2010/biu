@@ -2,8 +2,9 @@
 import fs from 'fs'
 import path from 'path'
 import { program } from 'commander'
-import deploy from './deploy'
-import commit from './commit'
+import deploy from './command/deploy'
+import commit from './command/commit'
+import gitflow from './command/gitflow'
 
 import { COMMIT_TYPES } from './constant'
 
@@ -14,6 +15,7 @@ program.version(pkg.version)
 program
   .command('deploy [env]')
   .alias('dp')
+  .usage('deploy|dp [options] dev|rc|prod')
   .description('project deployment command')
   .option('-d, --date [tpl]', 'tag date format', 'MMDDHHmm')
   .option('-v <version>', 'project version')
@@ -48,6 +50,40 @@ program
       commit(message, commitType, options[commitType])
     } else {
       commit(message)
+    }
+  })
+
+program
+  .command('gitflow [mode]')
+  .alias('gf')
+  .usage('gitflow|gf [options] init|start|finish')
+  .description('create a git workflow')
+  .option('-f, --feature <name>', 'branch prefixed with feature')
+  .option('-x, --hotfix <name>', 'branch prefixed with hotfix')
+  .option('-r, --release <name>', 'branch prefixed with release')
+  .action((mode, options) => {
+    const gitFlowType = ['feature', 'hotfix', 'release'].find((type) => type in options)
+    switch (mode) {
+      case 'init':
+        gitflow.init()
+        break
+      case 'start':
+        if (gitFlowType) {
+          gitflow.start(gitFlowType, options[gitFlowType])
+        } else {
+          gitflow.start()
+        }
+        break
+      case 'finish':
+        if (gitFlowType) {
+          gitflow.finish(gitFlowType, options[gitFlowType])
+        } else {
+          gitflow.finish()
+        }
+        break
+      default:
+        gitflow.run(mode)
+        break
     }
   })
 
