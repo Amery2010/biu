@@ -13,7 +13,7 @@ import { COMMIT_TYPES } from '../constant'
  */
 function generateCommitMessage(message: string, type?: string, scope?: string): string {
   if (type) {
-    return `${type}${scope ? `(${scope})` : ''}: ${message}`
+    return `${type}${typeof scope === 'string' ? `(${scope})` : ''}: ${message}`
   }
   return message
 }
