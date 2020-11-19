@@ -1,6 +1,8 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
 import chalk from '../helper/chalk'
+import { handleError } from '../helper'
+import { getCurentBranchName } from '../helper/git'
 
 import { COMMIT_TYPES } from '../constant'
 
@@ -31,6 +33,7 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
     shelljs.exec(`git commit -m '${commitMessage}'`)
     shelljs.echo(chalk.success('Biu: commit message success'))
   } else {
+    shelljs.echo(chalk.green(`Biu: current branch is `) + chalk.red(getCurentBranchName()))
     const choices: string[] = []
     Object.keys(COMMIT_TYPES).forEach((name) => {
       choices.push(name.padEnd(15, ' ') + COMMIT_TYPES[name].description)
@@ -58,7 +61,7 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
       const commitType = confirm.type.split(' ')[0]
       commit(confirm.message, commitType, confirm.scope)
     } else {
-      shelljs.echo(chalk.error('Biu: commit message is required!'))
+      handleError('commit message is required!')
     }
   }
 }

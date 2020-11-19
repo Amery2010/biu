@@ -2,6 +2,8 @@ import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
 import chalk from '../helper/chalk'
 import dayjs from 'dayjs'
+import { handleError } from '../helper'
+import { getCurentBranchName, getRemotes } from '../helper/git'
 
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
 
@@ -30,9 +32,35 @@ function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: st
  * @param url project upstream url
  */
 function init(url: string): void {
-  shelljs.echo('Biu: start to initialize the project upstream...')
-  shelljs.exec(`git remote add upstream ${url}`)
-  shelljs.echo(chalk.success('Biu: the upstream remote is added successfully'))
+  const remotes = getRemotes()
+  if (remotes.includes('upstream')) {
+    shelljs.echo(chalk.warning('Biu: the upstream remote already exists'))
+  } else {
+    shelljs.echo('Biu: start to initialize the project upstream...')
+    shelljs.exec(`git remote add upstream ${url}`)
+    shelljs.echo(chalk.success('Biu: the upstream remote is added successfully'))
+  }
+}
+
+function syncBranch(branchName: string): void {
+  if (!getRemotes().includes('upstream')) {
+    handleError('cannot find `upstream` remote, please set up `upstream` remote first.\n biu dp --init <url>')
+  }
+  shelljs.echo(`Biu: pull upstream ${branchName} branch...`)
+  if (getCurentBranchName() !== branchName) {
+    shelljs.exec(`git fetch upstream ${branchName}`)
+    shelljs.exec(`git checkout -b ${branchName} upstream/${branchName}`)
+    shelljs.exec(`git pull upstream ${branchName}`)
+  } else {
+    shelljs.exec(`git pull upstream ${branchName}`)
+  }
+}
+
+function pushTagToUpstream(tagName: string) {
+  shelljs.echo('Biu: push tag to upstream...')
+  shelljs.exec(`git tag ${tagName}`)
+  shelljs.exec(`git push upstream ${tagName}`)
+  shelljs.echo(chalk.success(`Biu: ${tagName} was pushed success`))
 }
 
 /**
@@ -42,27 +70,15 @@ function init(url: string): void {
  * @param version project version
  */
 async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void> {
-  let tagName = ''
   switch (env) {
     case 'dev':
     case 'develop':
-      tagName = getTagString('dev', dateTpl, version)
-      shelljs.echo('Biu: push tag to upstream...')
-      shelljs.exec(`git tag ${tagName} -m 'build: Deploy to development environment'`)
-      shelljs.exec(`git push upstream ${tagName}`)
-      shelljs.echo(chalk.success(`Biu: ${tagName} was pushed success`))
+      pushTagToUpstream(getTagString('dev', dateTpl, version))
       break
     case 'rc':
     case 'release':
-      tagName = getTagString('rc', dateTpl, version)
-      shelljs.echo('Biu: pull upstream master branch...')
-      shelljs.exec('git fetch upstream develop')
-      shelljs.exec('git checkout -b develop upstream/develop')
-      shelljs.exec('git pull upstream develop')
-      shelljs.echo('Biu: push tag to upstream...')
-      shelljs.exec(`git tag ${tagName} -m 'build: Deploy to release environment'`)
-      shelljs.exec(`git push upstream ${tagName}`)
-      shelljs.echo(chalk.success(`Biu: ${tagName} was pushed success`))
+      syncBranch('develop')
+      pushTagToUpstream(getTagString('rc', dateTpl, version))
       break
     case 'prod':
     case 'production':
@@ -75,22 +91,15 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
         },
       ])
       if (confirm.deployConfirm) {
-        tagName = getTagString('prod', dateTpl, version)
-        shelljs.echo('Biu: pull upstream master branch...')
-        shelljs.exec('git fetch upstream master')
-        shelljs.exec('git checkout -b master upstream/master')
-        shelljs.exec('git pull upstream master')
-        shelljs.echo('Biu: push tag to upstream...')
-        shelljs.exec(`git tag ${tagName} -m 'build: Deploy to production environment'`)
-        shelljs.exec(`git push upstream ${tagName}`)
-        shelljs.echo(chalk.success(`Biu: ${tagName} was pushed success`))
+        syncBranch('master')
+        pushTagToUpstream(getTagString('prod', dateTpl, version))
       } else {
-        shelljs.echo(chalk.warning('Biu: You canceled the command to deploy to the production environment'))
+        shelljs.echo(chalk.warning('Biu: you canceled the command to deploy to the production environment'))
       }
       break
     default:
       if (env) {
-        shelljs.echo(chalk.error(`Biu: Unknown env '${env}'`))
+        handleError(`unknown env '${env}'`)
       } else {
         const confirm = await prompt([
           {
@@ -102,7 +111,8 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
           },
         ])
         if (confirm.type === 'exit') {
-          shelljs.exit()
+          shelljs.echo(chalk.warning('Biu: you canceled the deployment command'))
+          shelljs.exit(1)
         } else {
           deploy(confirm.type, dateTpl, version)
         }
