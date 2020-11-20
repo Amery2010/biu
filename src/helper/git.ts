@@ -1,4 +1,15 @@
 import shelljs from 'shelljs'
+import { handleError } from './index'
+
+/**
+ * 检查系统是否已经安装 git
+ * @throws 提示用户需要安装 git
+ */
+export function checkGit(): void {
+  if (!shelljs.which('git')) {
+    handleError('This command depends on `git`')
+  }
+}
 
 /**
  * 获取当前分支名

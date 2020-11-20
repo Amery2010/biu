@@ -2,7 +2,7 @@ import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
 import chalk from '../helper/chalk'
 import { handleError } from '../helper'
-import { getCurentBranchName } from '../helper/git'
+import { getCurentBranchName, getLocalStatus } from '../helper/git'
 
 import { COMMIT_TYPES } from '../constant'
 
@@ -29,7 +29,24 @@ function generateCommitMessage(message: string, type?: string, scope?: string): 
 async function commit(message: string, type?: string, scope?: string): Promise<void> {
   const commitMessage = generateCommitMessage(message, type, scope)
   if (commitMessage) {
-    shelljs.exec(`git commit -a -m '${commitMessage}'`)
+    const localStatus = getLocalStatus()
+    if (localStatus.length > 0) {
+      shelljs.echo(localStatus.join('\n'))
+      const answers = await prompt([
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message: 'Whether to commit locally modified files',
+        },
+      ])
+      if (answers.confirm) {
+        shelljs.exec('git add .')
+      } else {
+        shelljs.echo(chalk.warning('Biu: please process locally modified files first'))
+        shelljs.exit(1)
+      }
+    }
+    shelljs.exec(`git commit -m '${commitMessage}'`)
     shelljs.echo(chalk.success('Biu: commit message success'))
   } else {
     shelljs.echo(chalk.green(`Biu: current branch is `) + chalk.red(getCurentBranchName()))

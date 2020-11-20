@@ -6,7 +6,7 @@ import deploy from './command/deploy'
 import commit from './command/commit'
 import gitflow from './command/gitflow'
 
-// import { getLocalStatus } from './helper/git'
+import { checkGit } from './helper/git'
 
 import { COMMIT_TYPES } from './constant'
 
@@ -23,6 +23,7 @@ program
   .option('-v <version>', '项目版本号')
   .option('--init <url>', 'upstream 仓库地址')
   .action((env, options) => {
+    checkGit()
     if (options.init) {
       deploy.init(options.init)
     } else {
@@ -48,6 +49,7 @@ program
   .option(`-${COMMIT_TYPES.chore.alias}, --${COMMIT_TYPES.chore.name} [scope]`, COMMIT_TYPES.chore.description)
   .option(`-${COMMIT_TYPES.other.alias}, --${COMMIT_TYPES.other.name} [scope]`, COMMIT_TYPES.other.description)
   .action((message, options) => {
+    checkGit()
     const commitType = Object.keys(COMMIT_TYPES).find((name) => name in options)
     if (commitType) {
       commit(message, commitType, options[commitType])
@@ -65,6 +67,7 @@ program
   .option('-x, --hotfix <name>', 'hotfix/ 前缀的分支名')
   .option('-r, --release <name>', 'release/ 前缀的分支名')
   .action((mode, options) => {
+    checkGit()
     const gitFlowType = ['feature', 'hotfix', 'release'].find((type) => type in options)
     switch (mode) {
       case 'init':

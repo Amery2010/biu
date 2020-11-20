@@ -4,5 +4,5 @@
  * @param type 提交类型
  * @param scope 提交范围
  */
-declare function commit(message: string, type?: string, scope?: string): Promise<void>
-export default commit
+declare function commit(message: string, type?: string, scope?: string): Promise<void>;
+export default commit;
