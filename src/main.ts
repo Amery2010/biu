@@ -17,7 +17,7 @@ program.version(pkg.version)
 program
   .command('deploy [env]')
   .alias('dp')
-  .usage('deploy|dp [options] dev|rc|prod')
+  .usage('deploy|dp <dev|rc|prod> [options]')
   .description('项目部署指令')
   .option('-d, --date [tpl]', '日期格式', 'MMDDHHmm')
   .option('-v <version>', '项目版本号')
@@ -33,6 +33,7 @@ program
 program
   .command('commit [message]')
   .alias('cm')
+  .usage('commit|cm <message> [options]')
   .description('git 提交指令')
   .option(`-${COMMIT_TYPES.feat.alias}, --${COMMIT_TYPES.feat.name} [scope]`, COMMIT_TYPES.feat.description)
   .option(`-${COMMIT_TYPES.fix.alias}, --${COMMIT_TYPES.fix.name} [scope]`, COMMIT_TYPES.fix.description)
@@ -58,7 +59,7 @@ program
 program
   .command('gitflow [mode]')
   .alias('gf')
-  .usage('gitflow|gf [options] init|start|finish')
+  .usage('gitflow|gf <init|start|finish> [options]')
   .description('创建 gitflow 工作流')
   .option('-f, --feature <name>', 'feature/ 前缀的分支名')
   .option('-x, --hotfix <name>', 'hotfix/ 前缀的分支名')
