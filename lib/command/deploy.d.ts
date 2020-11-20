@@ -1,18 +1,18 @@
-declare type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production';
+declare type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
 /**
- * initialize the project upstream
- * @param url project upstream url
+ * 初始化项目的 `upstream` 仓库
+ * @param url 仓库地址
  */
-declare function init(url: string): void;
+declare function init(url: string): void
 /**
- * deployment project
- * @param env deployment environment, limited to `develop`, `release` and `production`, alias `dev`, `rc` and `prod`.
- * @param dateTpl tag date format template
- * @param version project version
+ * 部署项目指令
+ * @param env 部署环境，仅限于  `develop`、`release` 和 `production`，以及别名 `dev`、`rc` 和 `prod`
+ * @param dateTpl 日期格式模板
+ * @param version 项目版本号
  */
-declare function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void>;
+declare function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void>
 declare const _default: {
-    init: typeof init;
-    run: typeof deploy;
-};
-export default _default;
+  init: typeof init
+  run: typeof deploy
+}
+export default _default

@@ -8,28 +8,28 @@ import { getCurentBranchName, getRemotes } from '../helper/git'
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
 
 /**
- * get tag date format
- * @param tpl tag date format template
- * @returns tag date format
+ * 获取格式化的日期
+ * @param tpl 日期格式模板
+ * @returns 格式化的日期
  */
 function getDateString(tpl?: string): string {
   return dayjs().format(tpl)
 }
 
 /**
- * get tag string
- * @param env deployment environment, limited to `dev`, `rc` and `prod`
- * @param dateTpl tag date format template
- * @param version project version
- * @returns tag string
+ * 获取 Tag 文本
+ * @param env 部署环境，仅限于 `dev`、`rc` 和 `prod`
+ * @param dateTpl 日期格式模板
+ * @param version 项目版本号
+ * @returns Tag 文本
  */
 function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: string): string {
   return `deploys/${env}/${version ? `v${version}_` : ''}${getDateString(dateTpl)}`
 }
 
 /**
- * initialize the project upstream
- * @param url project upstream url
+ * 初始化项目的 `upstream` 仓库
+ * @param url 仓库地址
  */
 function init(url: string): void {
   const remotes = getRemotes()
@@ -42,6 +42,10 @@ function init(url: string): void {
   }
 }
 
+/**
+ * 同步分支
+ * @param branchName 分支名
+ */
 function syncBranch(branchName: string): void {
   if (!getRemotes().includes('upstream')) {
     handleError('cannot find `upstream` remote, please set up `upstream` remote first.\n biu dp --init <url>')
@@ -56,7 +60,11 @@ function syncBranch(branchName: string): void {
   }
 }
 
-function pushTagToUpstream(tagName: string) {
+/**
+ * 将 Tag 推送到 `upstream` 仓库
+ * @param tagName 标签名
+ */
+function pushTagToUpstream(tagName: string): void {
   shelljs.echo('Biu: push tag to upstream...')
   shelljs.exec(`git tag ${tagName}`)
   shelljs.exec(`git push upstream ${tagName}`)
@@ -64,10 +72,10 @@ function pushTagToUpstream(tagName: string) {
 }
 
 /**
- * deployment project
- * @param env deployment environment, limited to `develop`, `release` and `production`, alias `dev`, `rc` and `prod`.
- * @param dateTpl tag date format template
- * @param version project version
+ * 部署项目指令
+ * @param env 部署环境，仅限于  `develop`、`release` 和 `production`，以及别名 `dev`、`rc` 和 `prod`
+ * @param dateTpl 日期格式模板
+ * @param version 项目版本号
  */
 async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void> {
   switch (env) {

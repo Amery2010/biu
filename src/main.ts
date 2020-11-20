@@ -6,7 +6,7 @@ import deploy from './command/deploy'
 import commit from './command/commit'
 import gitflow from './command/gitflow'
 
-import { getRemoteBranches } from './helper/git'
+// import { getLocalStatus } from './helper/git'
 
 import { COMMIT_TYPES } from './constant'
 
@@ -89,8 +89,8 @@ program
     }
   })
 
-program.command('test').action(() => {
-  console.log(getRemoteBranches())
-})
+// program.command('test').action(() => {
+//   console.log(getLocalStatus())
+// })
 
 program.parse(process.argv)

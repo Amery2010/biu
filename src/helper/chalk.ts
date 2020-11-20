@@ -6,9 +6,7 @@ export const warning = chalk.keyword('yellow')
 
 export default Object.assign(chalk, {
   success,
-  ok: success,
   error,
   fail: error,
   warning,
-  warn: warning,
 })

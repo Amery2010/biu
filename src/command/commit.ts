@@ -7,11 +7,11 @@ import { getCurentBranchName } from '../helper/git'
 import { COMMIT_TYPES } from '../constant'
 
 /**
- * generate commit message
- * @param message commit message
- * @param type commit type
- * @param scope commit scope
- * @returns formatted commit message
+ * 生成提交信息
+ * @param message 提交信息
+ * @param type 提交类型
+ * @param scope 提交范围
+ * @returns 格式化后的提交信息
  */
 function generateCommitMessage(message: string, type?: string, scope?: string): string {
   if (type) {
@@ -21,16 +21,15 @@ function generateCommitMessage(message: string, type?: string, scope?: string): 
 }
 
 /**
- * git commit command
- * @param message commit message
- * @param type commit type
- * @param scope commit scope
+ * git 提交指令
+ * @param message 提交信息
+ * @param type 提交类型
+ * @param scope 提交范围
  */
 async function commit(message: string, type?: string, scope?: string): Promise<void> {
   const commitMessage = generateCommitMessage(message, type, scope)
   if (commitMessage) {
-    shelljs.exec('git add .')
-    shelljs.exec(`git commit -m '${commitMessage}'`)
+    shelljs.exec(`git commit -a -m '${commitMessage}'`)
     shelljs.echo(chalk.success('Biu: commit message success'))
   } else {
     shelljs.echo(chalk.green(`Biu: current branch is `) + chalk.red(getCurentBranchName()))
