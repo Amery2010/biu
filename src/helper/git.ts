@@ -59,3 +59,10 @@ export function getLocalStatus(): string[][] {
   const fileStatus: string[] = raw.split('\n')
   return fileStatus.map((status) => status.trim().split(' '))
 }
+
+/**
+ * 重置提交内容
+ */
+export function reset(): void {
+  shelljs.exec('git reset --hard HEAD^')
+}

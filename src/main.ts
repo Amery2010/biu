@@ -18,10 +18,10 @@ program
   .command('deploy [env]')
   .alias('dp')
   .usage('deploy|dp [options] dev|rc|prod')
-  .description('project deployment command')
-  .option('-d, --date [tpl]', 'tag date format', 'MMDDHHmm')
-  .option('-v <version>', 'project version')
-  .option('--init <url>', 'git upstream url')
+  .description('项目部署指令')
+  .option('-d, --date [tpl]', '日期格式', 'MMDDHHmm')
+  .option('-v <version>', '项目版本号')
+  .option('--init <url>', 'upstream 仓库地址')
   .action((env, options) => {
     if (options.init) {
       deploy.init(options.init)
@@ -33,7 +33,7 @@ program
 program
   .command('commit [message]')
   .alias('cm')
-  .description('git commit command')
+  .description('git 提交指令')
   .option(`-${COMMIT_TYPES.feat.alias}, --${COMMIT_TYPES.feat.name} [scope]`, COMMIT_TYPES.feat.description)
   .option(`-${COMMIT_TYPES.fix.alias}, --${COMMIT_TYPES.fix.name} [scope]`, COMMIT_TYPES.fix.description)
   .option(`-${COMMIT_TYPES.style.alias}, --${COMMIT_TYPES.style.name} [scope]`, COMMIT_TYPES.style.description)
@@ -59,10 +59,10 @@ program
   .command('gitflow [mode]')
   .alias('gf')
   .usage('gitflow|gf [options] init|start|finish')
-  .description('create a git workflow')
-  .option('-f, --feature <name>', 'branch prefixed with feature')
-  .option('-x, --hotfix <name>', 'branch prefixed with hotfix')
-  .option('-r, --release <name>', 'branch prefixed with release')
+  .description('创建 gitflow 工作流')
+  .option('-f, --feature <name>', 'feature/ 前缀的分支名')
+  .option('-x, --hotfix <name>', 'hotfix/ 前缀的分支名')
+  .option('-r, --release <name>', 'release/ 前缀的分支名')
   .action((mode, options) => {
     const gitFlowType = ['feature', 'hotfix', 'release'].find((type) => type in options)
     switch (mode) {

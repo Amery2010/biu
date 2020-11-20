@@ -23,3 +23,7 @@ export declare function getRemotes(): string[]
  * @returns 本地文件状态列表
  */
 export declare function getLocalStatus(): string[][]
+/**
+ * 重置提交内容
+ */
+export declare function reset(): void
