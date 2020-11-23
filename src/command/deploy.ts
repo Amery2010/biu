@@ -1,8 +1,8 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
-import chalk from '../helper/chalk'
 import dayjs from 'dayjs'
 import { handleError } from '../helper'
+import chalk from '../helper/chalk'
 import { getCurentBranchName, getRemotes } from '../helper/git'
 
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'

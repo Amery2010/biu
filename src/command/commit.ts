@@ -1,7 +1,7 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
-import chalk from '../helper/chalk'
 import { handleError } from '../helper'
+import chalk from '../helper/chalk'
 import { getCurentBranchName, getLocalStatus } from '../helper/git'
 
 import { COMMIT_TYPES } from '../constant'
@@ -15,7 +15,7 @@ import { COMMIT_TYPES } from '../constant'
  */
 function generateCommitMessage(message: string, type?: string, scope?: string): string {
   if (type) {
-    return `${type}${typeof scope === 'string' ? `(${scope})` : ''}: ${message}`
+    return `${type}${scope ? `(${scope})` : ''}: ${message}`
   }
   return message
 }
@@ -42,7 +42,7 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
       if (answers.confirm) {
         shelljs.exec('git add .')
       } else {
-        shelljs.echo(chalk.warning('Biu: please process locally modified files first'))
+        shelljs.echo(chalk.warning('Biu: please commit locally modified files or checkout first'))
         shelljs.exit(1)
       }
     }
