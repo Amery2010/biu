@@ -24,7 +24,7 @@ export function getCurentBranchName(): string {
  * @returns 本地分支列表
  */
 export function getLocalBranches(): string[] {
-  const raw = shelljs.exec('git branch', { silent: true }).toString().trimEnd()
+  const raw = shelljs.exec('git branch', { silent: true }).toString().trim()
   const branches: string[] = raw.split('\n')
   return branches.map((branchName) => {
     if (/\*/.test(branchName)) {
@@ -40,7 +40,7 @@ export function getLocalBranches(): string[] {
  * @returns 远端分支列表
  */
 export function getRemoteBranches(): string[] {
-  const raw = shelljs.exec('git branch -r', { silent: true }).toString().trimEnd()
+  const raw = shelljs.exec('git branch -r', { silent: true }).toString().trim()
   const branches: string[] = raw.split('\n')
   return branches.map((branchName) => {
     if (/->/.test(branchName)) {
@@ -56,7 +56,7 @@ export function getRemoteBranches(): string[] {
  * @returns 远端仓库列表
  */
 export function getRemotes(): string[] {
-  const raw = shelljs.exec('git remote', { silent: true }).toString().trimEnd()
+  const raw = shelljs.exec('git remote', { silent: true }).toString().trim()
   const remotes: string[] = raw.split('\n')
   return remotes.map((remoteName) => remoteName.trim())
 }
@@ -66,7 +66,7 @@ export function getRemotes(): string[] {
  * @returns 本地文件状态列表
  */
 export function getLocalStatus(): string[][] {
-  const raw = shelljs.exec('git status --porcelain', { silent: true }).toString().trimEnd()
+  const raw = shelljs.exec('git status --porcelain', { silent: true }).toString().trim()
   const fileStatus: string[] = raw.split('\n')
   return fileStatus.map((status) => status.trim().split(' '))
 }
