@@ -68,6 +68,7 @@ export function getRemotes(): string[] {
 export function getLocalStatus(): string[][] {
   const raw = shelljs.exec('git status --porcelain', { silent: true }).toString().trim()
   const fileStatus: string[] = raw.split('\n')
+  console.log('getLocalStatus', fileStatus)
   return fileStatus.map((status) => status.trim().split(' '))
 }
 
