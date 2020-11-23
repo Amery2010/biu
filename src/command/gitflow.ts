@@ -2,7 +2,7 @@ import shelljs from 'shelljs'
 // import { prompt } from 'inquirer'
 import { handleError } from '../helper'
 import chalk from '../helper/chalk'
-import { getLocalStatus, getLocalBranches, getRemoteBranches } from '../helper/git'
+import { getLocalStatus, getCurentBranchName, getLocalBranches, getRemoteBranches } from '../helper/git'
 
 type GitFlowMode = 'init' | 'start' | 'finish'
 
@@ -29,7 +29,9 @@ function init(): void {
     if (remoteBranches.includes('develop')) {
       shelljs.exec('git pull')
     } else {
-      shelljs.exec('git checkout master')
+      if (getCurentBranchName() !== 'master') {
+        shelljs.exec('git checkout master')
+      }
       shelljs.exec('git pull')
       shelljs.exec('git checkout -b develop master')
     }
