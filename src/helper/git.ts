@@ -25,7 +25,7 @@ export function getCurentBranchName(): string {
  */
 export function getLocalBranches(): string[] {
   const raw = shelljs.exec('git branch', { silent: true }).toString().trim()
-  const branches: string[] = raw.split('\n')
+  const branches: string[] = raw !== '' ? raw.split('\n') : []
   return branches.map((branchName) => {
     if (/\*/.test(branchName)) {
       return branchName.replace('* ', '').trim()
@@ -41,7 +41,7 @@ export function getLocalBranches(): string[] {
  */
 export function getRemoteBranches(): string[] {
   const raw = shelljs.exec('git branch -r', { silent: true }).toString().trim()
-  const branches: string[] = raw.split('\n')
+  const branches: string[] = raw !== '' ? raw.split('\n') : []
   return branches.map((branchName) => {
     if (/->/.test(branchName)) {
       return branchName.split('->')[0].trim()
@@ -57,7 +57,7 @@ export function getRemoteBranches(): string[] {
  */
 export function getRemotes(): string[] {
   const raw = shelljs.exec('git remote', { silent: true }).toString().trim()
-  const remotes: string[] = raw.split('\n')
+  const remotes: string[] = raw !== '' ? raw.split('\n') : []
   return remotes.map((remoteName) => remoteName.trim())
 }
 
@@ -67,8 +67,7 @@ export function getRemotes(): string[] {
  */
 export function getLocalStatus(): string[][] {
   const raw = shelljs.exec('git status --porcelain', { silent: true }).toString().trim()
-  const fileStatus: string[] = raw.split('\n')
-  console.log('getLocalStatus', fileStatus)
+  const fileStatus: string[] = raw !== '' ? raw.split('\n') : []
   return fileStatus.map((status) => status.trim().split(' '))
 }
 

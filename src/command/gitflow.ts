@@ -1,6 +1,6 @@
 import shelljs from 'shelljs'
 // import { prompt } from 'inquirer'
-// import { handleError } from '../helper'
+import { handleError } from '../helper'
 import chalk from '../helper/chalk'
 import { getLocalStatus, getLocalBranches, getRemoteBranches } from '../helper/git'
 
@@ -11,13 +11,11 @@ type GitFlowMode = 'init' | 'start' | 'finish'
  */
 function checkLocalStatus(): void {
   const localStatus = getLocalStatus()
-  console.log('checkLocalStatus', localStatus)
-  shelljs.exit(1)
-  // if (localStatus.length > 0) {
-  //   console.log(localStatus)
-  //   shelljs.echo(localStatus.join('\n'))
-  //   handleError('Biu: please commit locally modified files or checkout first')
-  // }
+  if (localStatus.length > 0) {
+    console.log(localStatus)
+    shelljs.echo(localStatus.join('\n'))
+    handleError('Biu: please commit locally modified files or checkout first')
+  }
 }
 
 /**
