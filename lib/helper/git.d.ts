@@ -29,6 +29,15 @@ export declare function getRemotes(): string[];
  */
 export declare function getLocalStatus(): string[][];
 /**
+ * 检查本地是否存在未提交的
+ */
+export declare function checkLocalStatus(): void;
+/**
+ * 拉取远端分支内容到本地
+ * @param branchName 分支名
+ */
+export declare function pullRemoteBranch(branchName: string): void;
+/**
  * 重置提交内容
  */
 export declare function reset(): void;

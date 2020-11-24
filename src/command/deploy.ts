@@ -90,15 +90,15 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
       break
     case 'prod':
     case 'production':
-      const confirm = await prompt([
+      const answers = await prompt([
         {
           type: 'confirm',
-          name: 'deployConfirm',
+          name: 'confirm',
           message: 'Are you sure to deploy to the production environment?',
           default: false,
         },
       ])
-      if (confirm.deployConfirm) {
+      if (answers.confirm) {
         syncBranch('master')
         pushTagToUpstream(getTagString('prod', dateTpl, version))
       } else {
@@ -107,23 +107,18 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
       break
     default:
       if (env) {
-        handleError(`unknown env '${env}'`)
+        handleError(`unknown env "${env}"`)
       } else {
-        const confirm = await prompt([
+        const answers = await prompt([
           {
             type: 'list',
             name: 'type',
             message: 'Please select the environment you want to deploy.',
-            choices: ['develop', 'release', 'production', 'exit'],
+            choices: ['develop', 'release', 'production'],
             default: 'develop',
           },
         ])
-        if (confirm.type === 'exit') {
-          shelljs.echo(chalk.warning('Biu: you canceled the deployment command'))
-          shelljs.exit(1)
-        } else {
-          deploy(confirm.type, dateTpl, version)
-        }
+        deploy(answers.type, dateTpl, version)
       }
       break
   }

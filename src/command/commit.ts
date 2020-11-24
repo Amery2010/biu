@@ -36,7 +36,7 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
         {
           type: 'confirm',
           name: 'confirm',
-          message: 'Whether to commit locally modified files',
+          message: 'Do you want to commit locally modified files?',
         },
       ])
       if (answers.confirm) {
@@ -54,11 +54,11 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
     Object.keys(COMMIT_TYPES).forEach((name) => {
       choices.push(name.padEnd(15, ' ') + COMMIT_TYPES[name].description)
     })
-    const confirm = await prompt([
+    const answers = await prompt([
       {
         type: 'list',
         name: 'type',
-        message: 'Please select commit type.',
+        message: 'Please choose a commit type.',
         choices,
       },
       {
@@ -73,9 +73,9 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
         message: 'Please enter the commit message.',
       },
     ])
-    if (confirm.message) {
-      const commitType = confirm.type.split(' ')[0]
-      commit(confirm.message, commitType, confirm.scope)
+    if (answers.message) {
+      const commitType = answers.type.split(' ')[0]
+      commit(answers.message, commitType, answers.scope)
     } else {
       handleError('commit message is required!')
     }

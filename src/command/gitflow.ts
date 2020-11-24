@@ -1,27 +1,21 @@
 import shelljs from 'shelljs'
-// import { prompt } from 'inquirer'
-import { handleError } from '../helper'
+import { prompt } from 'inquirer'
+import { handleError, getProjectVersion } from '../helper'
 import chalk from '../helper/chalk'
-import { getLocalStatus, getCurentBranchName, getLocalBranches, getRemoteBranches } from '../helper/git'
+import {
+  checkLocalStatus,
+  getCurentBranchName,
+  getLocalBranches,
+  getRemoteBranches,
+  pullRemoteBranch,
+} from '../helper/git'
 
 type GitFlowMode = 'init' | 'start' | 'finish'
 
 /**
- * 检查本地是否存在未提交的
- */
-function checkLocalStatus(): void {
-  const localStatus = getLocalStatus()
-  if (localStatus.length > 0) {
-    console.log(localStatus)
-    shelljs.echo(localStatus.join('\n'))
-    handleError('Biu: please commit locally modified files or checkout first')
-  }
-}
-
-/**
  * 初始化仓库，创建 develop 分支
  */
-function init(): void {
+export function init(): void {
   checkLocalStatus()
   const localBranches = getLocalBranches()
   if (!localBranches.includes('develop')) {
@@ -41,27 +35,146 @@ function init(): void {
   }
 }
 
-async function start(type?: string, name?: string): Promise<void> {
+export async function start(type?: string, name?: string): Promise<void> {
+  checkLocalStatus()
   if (type) {
-    console.log(type, name)
+    switch (type) {
+      case 'feature':
+        pullRemoteBranch('develop')
+        shelljs.exec(`git checkout -b feature/${name} develop`)
+        shelljs.echo(chalk.success(`Biu: create the "feature/${name}" branch successfully`))
+        break
+      case 'hotfix':
+        pullRemoteBranch('master')
+        shelljs.exec(`git checkout -b hotfix/${name} master`)
+        shelljs.echo(chalk.success(`Biu: create the "hotfix/${name}" branch successfully`))
+        break
+      case 'release':
+        pullRemoteBranch('develop')
+        shelljs.exec(`git checkout -b release/${name} develop`)
+        shelljs.echo(chalk.success(`Biu: create the "release/${name}" branch successfully`))
+        break
+      default:
+        handleError(`unknown type "${type}"`)
+        break
+    }
   } else {
-    // select type
+    const answers = await prompt([
+      {
+        type: 'list',
+        name: 'type',
+        message: 'Please choose a gitflow type.',
+        choices: ['feature', 'hotfix', 'release'],
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: `Please enter the branch name.`,
+      },
+    ])
+    start(answers.type, answers.name)
   }
 }
 
-async function finish(type?: string, name?: string): Promise<void> {
+export async function finish(type?: string, name?: string): Promise<void> {
+  checkLocalStatus()
   if (type) {
-    console.log(type, name)
+    switch (type) {
+      case 'feature':
+        pullRemoteBranch('develop')
+        if (shelljs.exec(`git merge --no-ff feature/${name}`).stderr) {
+          handleError(`an error occurred while merging the "feature/${name}" branch to "develop" branch`)
+        }
+        shelljs.exec('git push origin develop')
+        shelljs.exec(`git branch -d feature/${name}`)
+        shelljs.echo(chalk.success(`Biu: finished the "feature/${name}" workflow successfully`))
+        break
+      case 'hotfix':
+        pullRemoteBranch('master')
+        if (shelljs.exec(`git merge --no-ff hotfix/${name}`).stderr) {
+          handleError(`an error occurred while merging the "hotfix/${name}" branch to "master" branch`)
+        }
+        shelljs.exec('git push origin master')
+        shelljs.echo(chalk.success(`Biu: merged the "hotfix/${name}" branch to "master" branch`))
+        pullRemoteBranch('develop')
+        if (shelljs.exec(`git merge --no-ff hotfix/${name}`).stderr) {
+          handleError(`an error occurred while merging the "hotfix/${name}" branch to "develop" branch`)
+        }
+        shelljs.exec('git push origin develop')
+        shelljs.echo(chalk.success(`Biu: merged the "hotfix/${name}" branch to "develop" branch`))
+        const tagName = `v${getProjectVersion()}`
+        shelljs.exec(`git tag ${tagName} -m "hotfix ${name}"`)
+        shelljs.exec(`git push origin ${tagName}`)
+        shelljs.echo(chalk.success(`Biu: tag ${tagName} was pushed success`))
+        shelljs.exec(`git branch -d hotfix/${name}`)
+        shelljs.echo(chalk.success(`Biu: finished the "hotfix/${name}" workflow successfully`))
+        break
+      case 'release':
+        pullRemoteBranch('master')
+        if (shelljs.exec(`git merge --no-ff release/${name}`).stderr) {
+          handleError(`an error occurred while merging the "release/${name}" branch to "master" branch`)
+        }
+        shelljs.exec('git push origin master')
+        shelljs.echo(chalk.success(`Biu: merged the "release/${name}" branch to "master" branch`))
+        pullRemoteBranch('develop')
+        if (shelljs.exec(`git merge --no-ff release/${name}`).stderr) {
+          handleError(`an error occurred while merging the "release/${name}" branch to "develop" branch`)
+        }
+        shelljs.exec('git push origin develop')
+        shelljs.echo(chalk.success(`Biu: merged the "release/${name}" branch to "develop" branch`))
+        shelljs.exec(`git tag v${name} -m "release v${name}"`)
+        shelljs.exec(`git push origin v${name}`)
+        shelljs.echo(chalk.success(`Biu: tag v${name} was pushed success`))
+        shelljs.exec(`git branch -d release/${name}`)
+        shelljs.echo(chalk.success(`Biu: finished the "release/${name}" workflow successfully`))
+        break
+      default:
+        handleError(`unknown type "${type}"`)
+        break
+    }
   } else {
-    // select type
+    const gitflow = await prompt([
+      {
+        type: 'list',
+        name: 'type',
+        message: 'Please choose the gitflow type.',
+        choices: ['feature', 'hotfix', 'release'],
+      },
+    ])
+    const localBranches = getLocalBranches()
+    const choices = localBranches.filter((branch) => new RegExp(`^${gitflow.type}/`).test(branch))
+    const answers = await prompt([
+      {
+        type: 'list',
+        name: 'name',
+        message: 'Please choose the completed branch.',
+        choices,
+      },
+    ])
+    finish(gitflow.type, answers.name)
   }
 }
 
-async function gitflow(mode: GitFlowMode): Promise<void> {
+export async function gitflow(mode: GitFlowMode): Promise<void> {
   if (mode) {
-    shelljs.echo(chalk.error(`Biu: Unknown mode '${mode}'`))
+    handleError(`unknown mode ${mode}`)
   } else {
-    console.log('select mode')
+    const answers = await prompt([
+      {
+        type: 'list',
+        name: 'type',
+        message: 'Please choose a gitflow mode.',
+        choices: ['init', 'start', 'finish'],
+      },
+    ])
+    switch (answers.type) {
+      case 'init':
+        return init()
+      case 'start':
+        return start()
+      case 'finish':
+        return finish()
+    }
   }
 }
 
