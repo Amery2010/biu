@@ -82,7 +82,7 @@ export async function finish(type?: string, name?: string): Promise<void> {
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
-        if (shelljs.exec(`git merge --no-ff feature/${name}`).stderr) {
+        if (shelljs.exec(`git merge --no-ff feature/${name}`, { silent: true }).stderr) {
           handleError(`an error occurred while merging the "feature/${name}" branch to "develop" branch`)
         }
         shelljs.exec('git push origin develop')
@@ -91,13 +91,13 @@ export async function finish(type?: string, name?: string): Promise<void> {
         break
       case 'hotfix':
         pullRemoteBranch('master')
-        if (shelljs.exec(`git merge --no-ff hotfix/${name}`).stderr) {
+        if (shelljs.exec(`git merge --no-ff hotfix/${name}`, { silent: true }).stderr) {
           handleError(`an error occurred while merging the "hotfix/${name}" branch to "master" branch`)
         }
         shelljs.exec('git push origin master')
         shelljs.echo(chalk.success(`Biu: merged the "hotfix/${name}" branch to "master" branch`))
         pullRemoteBranch('develop')
-        if (shelljs.exec(`git merge --no-ff hotfix/${name}`).stderr) {
+        if (shelljs.exec(`git merge --no-ff hotfix/${name}`, { silent: true }).stderr) {
           handleError(`an error occurred while merging the "hotfix/${name}" branch to "develop" branch`)
         }
         shelljs.exec('git push origin develop')
@@ -111,13 +111,13 @@ export async function finish(type?: string, name?: string): Promise<void> {
         break
       case 'release':
         pullRemoteBranch('master')
-        if (shelljs.exec(`git merge --no-ff release/${name}`).stderr) {
+        if (shelljs.exec(`git merge --no-ff release/${name}`, { silent: true }).stderr) {
           handleError(`an error occurred while merging the "release/${name}" branch to "master" branch`)
         }
         shelljs.exec('git push origin master')
         shelljs.echo(chalk.success(`Biu: merged the "release/${name}" branch to "master" branch`))
         pullRemoteBranch('develop')
-        if (shelljs.exec(`git merge --no-ff release/${name}`).stderr) {
+        if (shelljs.exec(`git merge --no-ff release/${name}`, { silent: true }).stderr) {
           handleError(`an error occurred while merging the "release/${name}" branch to "develop" branch`)
         }
         shelljs.exec('git push origin develop')
@@ -162,7 +162,7 @@ export async function finish(type?: string, name?: string): Promise<void> {
 
 export async function gitflow(mode: GitFlowMode): Promise<void> {
   if (mode) {
-    handleError(`unknown mode ${mode}`)
+    handleError(`unknown mode "${mode}"`)
   } else {
     const answers = await prompt([
       {
@@ -173,12 +173,14 @@ export async function gitflow(mode: GitFlowMode): Promise<void> {
       },
     ])
     switch (answers.type) {
-      case 'init':
-        return init()
       case 'start':
         return start()
       case 'finish':
         return finish()
+      case 'init':
+        return init()
+      default:
+        break
     }
   }
 }
