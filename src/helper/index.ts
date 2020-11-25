@@ -1,14 +1,38 @@
 import fs from 'fs'
 import path from 'path'
 import shelljs from 'shelljs'
-import chalk from './chalk'
+import chalk from 'chalk'
+
+/**
+ * 输出信息
+ * @param message 信息内容
+ * @param type 类型，主要用于信息颜色显示
+ * @param prefix 消息前缀，默认为 `Biu: `
+ */
+export function print(message: string, type?: 'success' | 'warning' | 'error', prefix = 'Biu'): void {
+  const biuMessage = prefix ? `${prefix}: ${message}` : message
+  switch (type) {
+    case 'success':
+      shelljs.echo(chalk.green(biuMessage))
+      break
+    case 'warning':
+      shelljs.echo(chalk.keyword('yellow')(biuMessage))
+      break
+    case 'error':
+      shelljs.echo(chalk.red(biuMessage))
+      break
+    default:
+      shelljs.echo(biuMessage)
+      break
+  }
+}
 
 /**
  * 处理错误信息
  * @param message 错误信息
  */
 export function handleError(message: string): void {
-  shelljs.echo(chalk.error(`Biu: ${message}`))
+  print(message, 'error')
   shelljs.exit(1)
 }
 

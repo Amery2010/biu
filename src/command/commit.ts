@@ -1,7 +1,7 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
-import { handleError } from '../helper'
-import chalk from '../helper/chalk'
+import chalk from 'chalk'
+import { print, handleError } from '../helper'
 import { getCurentBranchName, getLocalStatus } from '../helper/git'
 
 import { COMMIT_TYPES } from '../constant'
@@ -42,14 +42,14 @@ async function commit(message: string, type?: string, scope?: string): Promise<v
       if (answers.confirm) {
         shelljs.exec('git add .')
       } else {
-        shelljs.echo(chalk.warning('Biu: please commit locally modified files or checkout first'))
+        print('please commit locally modified files or checkout first', 'warning')
         shelljs.exit(1)
       }
     }
     shelljs.exec(`git commit -m '${commitMessage}'`)
-    shelljs.echo(chalk.success('Biu: commit message success'))
+    print('commit message success', 'success')
   } else {
-    shelljs.echo(chalk.green(`Biu: current branch is `) + chalk.red(getCurentBranchName()))
+    print(chalk.green(`current branch is `) + chalk.red(getCurentBranchName()))
     const choices: string[] = []
     Object.keys(COMMIT_TYPES).forEach((name) => {
       choices.push(name.padEnd(15, ' ') + COMMIT_TYPES[name].description)

@@ -1,7 +1,6 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
-import { handleError, getProjectVersion } from '../helper'
-import chalk from '../helper/chalk'
+import { print, handleError, getProjectVersion } from '../helper'
 import {
   checkLocalStatus,
   getCurentBranchName,
@@ -18,8 +17,9 @@ type GitFlowMode = 'init' | 'start' | 'finish'
  * @param source 来源分支名
  */
 function checkoutBranch(target: string, source: string) {
+  print(`checkout the "${target}" branch...`)
   shelljs.exec(`git checkout -b ${target} ${source}`)
-  shelljs.echo(chalk.success(`Biu: create the "${target}" branch successfully`))
+  print(`create the "${target}" branch successfully`, 'success')
 }
 
 /**
@@ -29,11 +29,12 @@ function checkoutBranch(target: string, source: string) {
  * @throws 抛出合并错误
  */
 function mergeBranch(target: string, source: string): void {
+  print(`merge the "${source}" branch to "${target}" branch...`)
   if (shelljs.exec(`git merge --no-ff ${source}`, { silent: true }).stderr) {
     handleError(`an error occurred while merging the "${source}" branch to "master" branch`)
   }
   shelljs.exec(`git push origin ${target}`)
-  shelljs.echo(chalk.success(`Biu: merged the "${source}" branch to "${target}" branch`))
+  print(`merged the "${source}" branch to "${target}" branch`, 'success')
 }
 
 /**
@@ -41,8 +42,9 @@ function mergeBranch(target: string, source: string): void {
  * @param branchName 分支名
  */
 function deleteBranchAfterFinishd(branchName: string): void {
+  print(`delete the "${branchName}" branch...`)
   shelljs.exec(`git branch -d ${branchName}`)
-  shelljs.echo(chalk.success(`Biu: finished the "${branchName}" workflow successfully`))
+  print(`finished the "${branchName}" workflow successfully`, 'success')
 }
 
 /**
@@ -51,9 +53,10 @@ function deleteBranchAfterFinishd(branchName: string): void {
  * @param message 备注信息
  */
 function pushTag(tagName: string, message: string): void {
+  print('create and push tag to origin...')
   shelljs.exec(`git tag ${tagName} -m "${message}"`)
   shelljs.exec(`git push origin ${tagName}`)
-  shelljs.echo(chalk.success(`Biu: tag ${tagName} was pushed success`))
+  print(`tag ${tagName} was pushed success`, 'success')
 }
 
 /**
@@ -73,9 +76,9 @@ export function init(): void {
       shelljs.exec('git pull')
       shelljs.exec('git checkout -b develop master')
     }
-    shelljs.echo(chalk.success('Biu: the current repository initialized successfully'))
+    print('the current repository initialized successfully', 'success')
   } else {
-    shelljs.echo(chalk.warning('Biu: the current repository has been initialized'))
+    print('the current repository has been initialized', 'warning')
   }
 }
 

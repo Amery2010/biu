@@ -1,8 +1,7 @@
 import shelljs from 'shelljs'
 import { prompt } from 'inquirer'
 import dayjs from 'dayjs'
-import { handleError } from '../helper'
-import chalk from '../helper/chalk'
+import { print, handleError } from '../helper'
 import { getCurentBranchName, getRemotes } from '../helper/git'
 
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
@@ -34,11 +33,11 @@ function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: st
 function init(url: string): void {
   const remotes = getRemotes()
   if (remotes.includes('upstream')) {
-    shelljs.echo(chalk.warning('Biu: the upstream remote already exists'))
+    print('the upstream remote already exists', 'warning')
   } else {
-    shelljs.echo('Biu: start to initialize the project upstream...')
+    print('start to initialize the project upstream...')
     shelljs.exec(`git remote add upstream ${url}`)
-    shelljs.echo(chalk.success('Biu: the upstream remote is added successfully'))
+    print('the upstream remote is added successfully', 'success')
   }
 }
 
@@ -50,7 +49,7 @@ function syncBranch(branchName: string): void {
   if (!getRemotes().includes('upstream')) {
     handleError('cannot find `upstream` remote, please set up `upstream` remote first.\n biu dp --init <url>')
   }
-  shelljs.echo(`Biu: pull upstream ${branchName} branch...`)
+  print(`pull upstream ${branchName} branch...`)
   if (getCurentBranchName() !== branchName) {
     shelljs.exec(`git fetch upstream ${branchName}`)
     shelljs.exec(`git checkout -b ${branchName} upstream/${branchName}`)
@@ -65,10 +64,10 @@ function syncBranch(branchName: string): void {
  * @param tagName 标签名
  */
 function pushTagToUpstream(tagName: string): void {
-  shelljs.echo('Biu: push tag to upstream...')
+  print('push tag to upstream...')
   shelljs.exec(`git tag ${tagName}`)
   shelljs.exec(`git push upstream ${tagName}`)
-  shelljs.echo(chalk.success(`Biu: ${tagName} was pushed success`))
+  print(`${tagName} was pushed success`, 'success')
 }
 
 /**
@@ -102,7 +101,7 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
         syncBranch('master')
         pushTagToUpstream(getTagString('prod', dateTpl, version))
       } else {
-        shelljs.echo(chalk.warning('Biu: you canceled the command to deploy to the production environment'))
+        print('you canceled the command to deploy to the production environment', 'warning')
       }
       break
     default:
