@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-import fs from 'fs'
 import path from 'path'
 import { program } from 'commander'
 import deploy from './command/deploy'
 import commit from './command/commit'
 import gitflow from './command/gitflow'
 
+import { getPkgInfor } from './helper'
 import { checkGit } from './helper/git'
 
 import { COMMIT_TYPES } from './constant'
 
-const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8'))
+const pkg = getPkgInfor(path.resolve(__dirname, '../package.json'))
 
 program.version(pkg.version)
 

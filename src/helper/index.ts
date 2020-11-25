@@ -13,20 +13,29 @@ export function handleError(message: string): void {
 }
 
 /**
+ * 获取 pkg 信息
+ * @param pkgPath package.json 所在的路径
+ * @returns pkg 信息
+ * @throws 错误提示
+ */
+export function getPkgInfor(pkgPath: string): any {
+  if (fs.existsSync(pkgPath)) {
+    return JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+  } else {
+    handleError('Could not find `package.json` file')
+  }
+}
+
+/**
  * 获取项目版本号
  * @returns 项目版本号
  * @throws 错误提示
  */
 export function getProjectVersion(): string | void {
-  const pkgPath = path.resolve(process.cwd(), './package.json')
-  if (fs.existsSync(pkgPath)) {
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
-    if (pkg.version) {
-      return pkg.version
-    } else {
-      handleError('Version is not defined in the `package.json` file')
-    }
+  const pkg = getPkgInfor(path.resolve(process.cwd(), './package.json'))
+  if (pkg.version) {
+    return pkg.version
   } else {
-    handleError('Could not find `package.json` file')
+    handleError('Version is not defined in the `package.json` file')
   }
 }
