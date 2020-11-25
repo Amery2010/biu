@@ -1,8 +1,9 @@
 import shelljs from 'shelljs'
+import commander from 'commander'
 import { prompt } from 'inquirer'
 import dayjs from 'dayjs'
 import { print, handleError } from '../helper'
-import { getCurentBranchName, getRemotes } from '../helper/git'
+import { checkGit, getCurentBranchName, getRemotes } from '../helper/git'
 
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
 
@@ -123,7 +124,21 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
   }
 }
 
-export default {
-  init,
-  run: deploy,
+export default function (program: commander.Command): void {
+  program
+    .command('deploy [env]')
+    .alias('dp')
+    .usage('deploy|dp <dev|rc|prod> [options]')
+    .description('项目部署指令')
+    .option('-d, --date [tpl]', '日期格式', 'MMDDHHmm')
+    .option('-v <version>', '项目版本号')
+    .option('--init <url>', 'upstream 仓库地址')
+    .action((env, options) => {
+      checkGit()
+      if (options.init) {
+        init(options.init)
+      } else {
+        deploy(env, options.date, options.v)
+      }
+    })
 }
