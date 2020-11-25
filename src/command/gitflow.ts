@@ -13,6 +13,50 @@ import {
 type GitFlowMode = 'init' | 'start' | 'finish'
 
 /**
+ * 创建分支
+ * @param target 目标分支名
+ * @param source 来源分支名
+ */
+function checkoutBranch(target: string, source: string) {
+  shelljs.exec(`git checkout -b ${target} ${source}`)
+  shelljs.echo(chalk.success(`Biu: create the "${target}" branch successfully`))
+}
+
+/**
+ * 合并分支
+ * @param target 目标分支名
+ * @param source 来源分支名
+ * @throws 抛出合并错误
+ */
+function mergeBranch(target: string, source: string): void {
+  if (shelljs.exec(`git merge --no-ff ${source}`, { silent: true }).stderr) {
+    handleError(`an error occurred while merging the "${source}" branch to "master" branch`)
+  }
+  shelljs.exec(`git push origin ${target}`)
+  shelljs.echo(chalk.success(`Biu: merged the "${source}" branch to "${target}" branch`))
+}
+
+/**
+ * 在完成操作后删除分支
+ * @param branchName 分支名
+ */
+function deleteBranchAfterFinishd(branchName: string): void {
+  shelljs.exec(`git branch -d ${branchName}`)
+  shelljs.echo(chalk.success(`Biu: finished the "${branchName}" workflow successfully`))
+}
+
+/**
+ * 推送 Tag
+ * @param tagName tag 名称
+ * @param message 备注信息
+ */
+function pushTag(tagName: string, message: string): void {
+  shelljs.exec(`git tag ${tagName} -m "${message}"`)
+  shelljs.exec(`git push origin ${tagName}`)
+  shelljs.echo(chalk.success(`Biu: tag ${tagName} was pushed success`))
+}
+
+/**
  * 初始化仓库，创建 develop 分支
  */
 export function init(): void {
@@ -41,18 +85,15 @@ export async function start(type?: string, name?: string): Promise<void> {
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
-        shelljs.exec(`git checkout -b feature/${name} develop`)
-        shelljs.echo(chalk.success(`Biu: create the "feature/${name}" branch successfully`))
+        checkoutBranch(`feature/${name}`, 'develop')
         break
       case 'hotfix':
         pullRemoteBranch('master')
-        shelljs.exec(`git checkout -b hotfix/${name} master`)
-        shelljs.echo(chalk.success(`Biu: create the "hotfix/${name}" branch successfully`))
+        checkoutBranch(`hotfix/${name}`, 'master')
         break
       case 'release':
         pullRemoteBranch('develop')
-        shelljs.exec(`git checkout -b release/${name} develop`)
-        shelljs.echo(chalk.success(`Biu: create the "release/${name}" branch successfully`))
+        checkoutBranch(`release/${name}`, 'develop')
         break
       default:
         handleError(`unknown type "${type}"`)
@@ -82,51 +123,24 @@ export async function finish(type?: string, name?: string): Promise<void> {
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
-        if (shelljs.exec(`git merge --no-ff feature/${name}`, { silent: true }).stderr) {
-          handleError(`an error occurred while merging the "feature/${name}" branch to "develop" branch`)
-        }
-        shelljs.exec('git push origin develop')
-        shelljs.exec(`git branch -d feature/${name}`)
-        shelljs.echo(chalk.success(`Biu: finished the "feature/${name}" workflow successfully`))
+        mergeBranch('develop', `feature/${name}`)
+        deleteBranchAfterFinishd(`feature/${name}`)
         break
       case 'hotfix':
         pullRemoteBranch('master')
-        if (shelljs.exec(`git merge --no-ff hotfix/${name}`, { silent: true }).stderr) {
-          handleError(`an error occurred while merging the "hotfix/${name}" branch to "master" branch`)
-        }
-        shelljs.exec('git push origin master')
-        shelljs.echo(chalk.success(`Biu: merged the "hotfix/${name}" branch to "master" branch`))
+        mergeBranch('master', `hotfix/${name}`)
         pullRemoteBranch('develop')
-        if (shelljs.exec(`git merge --no-ff hotfix/${name}`, { silent: true }).stderr) {
-          handleError(`an error occurred while merging the "hotfix/${name}" branch to "develop" branch`)
-        }
-        shelljs.exec('git push origin develop')
-        shelljs.echo(chalk.success(`Biu: merged the "hotfix/${name}" branch to "develop" branch`))
-        const tagName = `v${getProjectVersion()}`
-        shelljs.exec(`git tag ${tagName} -m "hotfix ${name}"`)
-        shelljs.exec(`git push origin ${tagName}`)
-        shelljs.echo(chalk.success(`Biu: tag ${tagName} was pushed success`))
-        shelljs.exec(`git branch -d hotfix/${name}`)
-        shelljs.echo(chalk.success(`Biu: finished the "hotfix/${name}" workflow successfully`))
+        mergeBranch('develop', `hotfix/${name}`)
+        pushTag(`v${getProjectVersion()}`, `hotfix ${name}`)
+        deleteBranchAfterFinishd(`hotfix/${name}`)
         break
       case 'release':
         pullRemoteBranch('master')
-        if (shelljs.exec(`git merge --no-ff release/${name}`, { silent: true }).stderr) {
-          handleError(`an error occurred while merging the "release/${name}" branch to "master" branch`)
-        }
-        shelljs.exec('git push origin master')
-        shelljs.echo(chalk.success(`Biu: merged the "release/${name}" branch to "master" branch`))
+        mergeBranch('master', `release/${name}`)
         pullRemoteBranch('develop')
-        if (shelljs.exec(`git merge --no-ff release/${name}`, { silent: true }).stderr) {
-          handleError(`an error occurred while merging the "release/${name}" branch to "develop" branch`)
-        }
-        shelljs.exec('git push origin develop')
-        shelljs.echo(chalk.success(`Biu: merged the "release/${name}" branch to "develop" branch`))
-        shelljs.exec(`git tag v${name} -m "release v${name}"`)
-        shelljs.exec(`git push origin v${name}`)
-        shelljs.echo(chalk.success(`Biu: tag v${name} was pushed success`))
-        shelljs.exec(`git branch -d release/${name}`)
-        shelljs.echo(chalk.success(`Biu: finished the "release/${name}" workflow successfully`))
+        mergeBranch('develop', `release/${name}`)
+        pushTag(`v${name}`, `release ${name}`)
+        deleteBranchAfterFinishd(`release/${name}`)
         break
       default:
         handleError(`unknown type "${type}"`)
