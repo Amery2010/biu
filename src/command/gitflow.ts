@@ -82,18 +82,19 @@ export function init(): void {
 export async function start(type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
+    if (!name) handleError('invalid branch name')
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
         checkoutBranch(`feature/${name}`, 'develop')
         break
-      case 'hotfix':
-        pullRemoteBranch('master')
-        checkoutBranch(`hotfix/${name}`, 'master')
-        break
       case 'release':
         pullRemoteBranch('develop')
         checkoutBranch(`release/${name}`, 'develop')
+        break
+      case 'hotfix':
+        pullRemoteBranch('master')
+        checkoutBranch(`hotfix/${name}`, 'master')
         break
       default:
         handleError(`unknown type "${type}"`)
@@ -105,7 +106,7 @@ export async function start(type?: string, name?: string): Promise<void> {
         type: 'list',
         name: 'type',
         message: 'Please choose a gitflow type.',
-        choices: ['feature', 'hotfix', 'release'],
+        choices: ['feature', 'release', 'hotfix'],
       },
       {
         type: 'input',
@@ -120,11 +121,20 @@ export async function start(type?: string, name?: string): Promise<void> {
 export async function finish(type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
+    if (!name) handleError('invalid branch name')
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
         mergeBranch('develop', `feature/${name}`)
         deleteBranchAfterFinishd(`feature/${name}`)
+        break
+      case 'release':
+        pullRemoteBranch('develop')
+        mergeBranch('develop', `release/${name}`)
+        pullRemoteBranch('master')
+        mergeBranch('master', `release/${name}`)
+        pushTag(`v${name}`, `release ${name}`)
+        deleteBranchAfterFinishd(`release/${name}`)
         break
       case 'hotfix':
         pullRemoteBranch('master')
@@ -133,14 +143,6 @@ export async function finish(type?: string, name?: string): Promise<void> {
         mergeBranch('develop', `hotfix/${name}`)
         pushTag(`v${getProjectVersion()}`, `hotfix ${name}`)
         deleteBranchAfterFinishd(`hotfix/${name}`)
-        break
-      case 'release':
-        pullRemoteBranch('master')
-        mergeBranch('master', `release/${name}`)
-        pullRemoteBranch('develop')
-        mergeBranch('develop', `release/${name}`)
-        pushTag(`v${name}`, `release ${name}`)
-        deleteBranchAfterFinishd(`release/${name}`)
         break
       default:
         handleError(`unknown type "${type}"`)
@@ -152,7 +154,7 @@ export async function finish(type?: string, name?: string): Promise<void> {
         type: 'list',
         name: 'type',
         message: 'Please choose the gitflow type.',
-        choices: ['feature', 'hotfix', 'release'],
+        choices: ['feature', 'release', 'hotfix'],
       },
     ])
     const localBranches = getLocalBranches()
