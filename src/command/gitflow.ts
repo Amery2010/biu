@@ -142,7 +142,12 @@ export async function finish(type?: string, name?: string): Promise<void> {
       },
     ])
     const localBranches = getLocalBranches()
-    const choices = localBranches.filter((branch) => new RegExp(`^${gitflow.type}/`).test(branch))
+    const choices: string[] = []
+    localBranches.forEach((branch) => {
+      if (new RegExp(`^${gitflow.type}/`).test(branch)) {
+        choices.push(branch.substring(gitflow.type.length + 1))
+      }
+    })
     const answers = await prompt([
       {
         type: 'list',

@@ -88,9 +88,7 @@ export function checkLocalStatus(): void {
  */
 export function pullRemoteBranch(branchName: string): void {
   shelljs.exec(`git checkout ${branchName}`)
-  if (shelljs.exec(`git pull origin ${branchName}`).stderr) {
-    handleError('git pull error')
-  }
+  shelljs.exec(`git pull origin ${branchName}`)
 }
 
 /**
