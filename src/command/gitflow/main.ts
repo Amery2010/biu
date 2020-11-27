@@ -1,15 +1,13 @@
 import shelljs from 'shelljs'
-import commander from 'commander'
 import { prompt } from 'inquirer'
-import { print, handleError, getProjectVersion } from '../helper'
+import { print, handleError, getProjectVersion } from '../../helper'
 import {
-  checkGit,
   checkLocalStatus,
   getCurentBranchName,
   getLocalBranches,
   getRemoteBranches,
   pullRemoteBranch,
-} from '../helper/git'
+} from '../../helper/git'
 
 type GitFlowMode = 'init' | 'start' | 'finish'
 
@@ -190,7 +188,7 @@ export async function gitflow(mode: GitFlowMode): Promise<void> {
         type: 'list',
         name: 'type',
         message: 'Please choose a gitflow mode.',
-        choices: ['init', 'start', 'finish'],
+        choices: ['start', 'finish', 'init'],
       },
     ])
     switch (answers.type) {
@@ -204,41 +202,4 @@ export async function gitflow(mode: GitFlowMode): Promise<void> {
         break
     }
   }
-}
-
-export default function (program: commander.Command): void {
-  program
-    .command('gitflow [mode]')
-    .alias('gf')
-    .usage('gitflow|gf <init|start|finish> [options]')
-    .description('创建 gitflow 工作流')
-    .option('-f, --feature <name>', 'feature/ 前缀的分支名')
-    .option('-r, --release <name>', 'release/ 前缀的分支名')
-    .option('-x, --hotfix <name>', 'hotfix/ 前缀的分支名')
-    .action((mode, options) => {
-      checkGit()
-      const gitFlowType = ['feature', 'release', 'hotfix'].find((type) => type in options)
-      switch (mode) {
-        case 'init':
-          init()
-          break
-        case 'start':
-          if (gitFlowType) {
-            start(gitFlowType, options[gitFlowType])
-          } else {
-            start()
-          }
-          break
-        case 'finish':
-          if (gitFlowType) {
-            finish(gitFlowType, options[gitFlowType])
-          } else {
-            finish()
-          }
-          break
-        default:
-          gitflow(mode)
-          break
-      }
-    })
 }

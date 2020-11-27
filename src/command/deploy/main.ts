@@ -1,9 +1,8 @@
 import shelljs from 'shelljs'
-import commander from 'commander'
 import { prompt } from 'inquirer'
 import dayjs from 'dayjs'
-import { print, handleError } from '../helper'
-import { checkGit, getCurentBranchName, getRemotes } from '../helper/git'
+import { print, handleError } from '../../helper'
+import { getCurentBranchName, getRemotes } from '../../helper/git'
 
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
 
@@ -31,7 +30,7 @@ function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: st
  * 初始化项目的 `upstream` 仓库
  * @param url 仓库地址
  */
-function init(url: string): void {
+export function init(url: string): void {
   const remotes = getRemotes()
   if (remotes.includes('upstream')) {
     print('the upstream remote already exists', 'warning')
@@ -77,7 +76,7 @@ function pushTagToUpstream(tagName: string): void {
  * @param dateTpl 日期格式模板
  * @param version 项目版本号
  */
-async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void> {
+export async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise<void> {
   switch (env) {
     case 'dev':
     case 'develop':
@@ -122,23 +121,4 @@ async function deploy(env: EnvType, dateTpl?: string, version?: string): Promise
       }
       break
   }
-}
-
-export default function (program: commander.Command): void {
-  program
-    .command('deploy [env]')
-    .alias('dp')
-    .usage('deploy|dp <dev|rc|prod> [options]')
-    .description('项目部署指令')
-    .option('-d, --date [tpl]', '日期格式', 'MMDDHHmm')
-    .option('-v <version>', '项目版本号')
-    .option('--init <url>', 'upstream 仓库地址')
-    .action((env, options) => {
-      checkGit()
-      if (options.init) {
-        init(options.init)
-      } else {
-        deploy(env, options.date, options.v)
-      }
-    })
 }

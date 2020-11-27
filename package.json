@@ -1,9 +1,9 @@
 {
   "name": "biu",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Biu is a script tool library for quick instructions.",
   "main": "lib/main.js",
-  "types": "lib/main.d.ts",
+  "types": "./types.d.ts",
   "sideEffects": false,
   "repository": "git@gitlab.jiliguala.com:amery/biu.git",
   "author": "Amery <amery@xiangfa.org>",
