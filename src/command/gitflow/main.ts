@@ -30,7 +30,7 @@ function checkoutBranch(target: string, source: string) {
  */
 function mergeBranch(target: string, source: string): void {
   print(`merge the "${source}" branch to "${target}" branch...`)
-  if (shelljs.exec(`git merge --no-ff ${source}`, { silent: true }).stderr) {
+  if (shelljs.exec(`git merge ${source}`).stderr) {
     handleError(`an error occurred while merging the "${source}" branch to "master" branch`)
   }
   shelljs.exec(`git push origin ${target}`)

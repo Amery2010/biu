@@ -128,7 +128,7 @@ git checkout -b feature/demo
 
 ```shell
 git checkout develop
-git merge --no-ff feature/demo
+git merge feature/demo
 git push origin develop
 git branch -d feature/demo
 ```
@@ -146,10 +146,10 @@ git checkout -b release/1.2.0
 
 ```shell
 git checkout develop
-git merge --no-ff release/1.2.0
+git merge release/1.2.0
 git push origin develop
 git checkout master
-git merge --no-ff release/1.2.0
+git merge release/1.2.0
 git push origin master
 git tag v1.2.0 -m 'release 1.2.0'
 git push origin v1.2.0
@@ -169,10 +169,10 @@ git checkout -b hotfix/fix-style
 
 ```shell
 git checkout master
-git merge --no-ff hotfix/fix-style
+git merge hotfix/fix-style
 git push origin master
 git checkout develop
-git merge --no-ff hotfix/fix-style
+git merge hotfix/fix-style
 git push origin develop
 git tag fix-style -m 'hotfix fix-style'
 git push origin fix-style
