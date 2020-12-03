@@ -1,19 +1,9 @@
 import commander from 'commander'
 import { checkGit } from '../../helper/git'
 import { init, start, finish, gitflow } from './main'
+import Config, { defaultConfig } from './config'
 
-import '../../config'
-
-export const defaultConfig: biu.GitFlowConfig = {
-  upstream: 'origin',
-  perfix: {
-    feature: 'feature',
-    hotfix: 'hotfix',
-    release: 'release',
-  },
-}
-
-export default function (program: commander.Command, config: biu.Config): void {
+export default function (program: commander.Command, config: Config): void {
   const gitflowConfig = Object.assign({}, defaultConfig, config)
   console.log(gitflowConfig)
 

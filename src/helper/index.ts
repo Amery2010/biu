@@ -37,16 +37,16 @@ export function handleError(message: string): void {
 }
 
 /**
- * 获取 pkg 信息
- * @param pkgPath package.json 所在的路径
- * @returns pkg 信息
+ * 获取文件内容
+ * @param path 文件所在的路径
+ * @returns 文件内容
  * @throws 错误提示
  */
-export function getPkgInfor(pkgPath: string): any {
-  if (fs.existsSync(pkgPath)) {
-    return JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+export function readFileData(path: string): any {
+  if (fs.existsSync(path)) {
+    return JSON.parse(fs.readFileSync(path, 'utf-8'))
   } else {
-    handleError('Could not find `package.json` file')
+    handleError(`could not find ${path} file`)
   }
 }
 
@@ -56,10 +56,10 @@ export function getPkgInfor(pkgPath: string): any {
  * @throws 错误提示
  */
 export function getProjectVersion(): string | void {
-  const pkg = getPkgInfor(path.resolve(process.cwd(), './package.json'))
+  const pkg = readFileData(path.resolve(process.cwd(), './package.json'))
   if (pkg.version) {
     return pkg.version
   } else {
-    handleError('Version is not defined in the `package.json` file')
+    handleError('version is not defined in the `package.json` file')
   }
 }

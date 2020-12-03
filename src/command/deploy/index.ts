@@ -1,15 +1,9 @@
 import commander from 'commander'
 import { checkGit } from '../../helper/git'
 import { init, deploy } from './main'
+import Config, { defaultConfig } from './config'
 
-import '../../config'
-
-const defaultConfig: biu.DeployConfig = {
-  upstream: 'upstream',
-  dataTpl: 'MMDDHHmm',
-}
-
-export default function (program: commander.Command, config: biu.Config): void {
+export default function (program: commander.Command, config: Config): void {
   const deployConfig = Object.assign({}, defaultConfig, config)
   console.log(deployConfig)
 
