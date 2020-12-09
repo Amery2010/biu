@@ -1,26 +1,28 @@
 import commander from 'commander'
 import { checkGit } from '../../helper/git'
 import { init, deploy } from './main'
-import Config, { defaultConfig } from './config'
+import { defaultConfig } from './config'
+import lang from './i18n'
 
-export default function (program: commander.Command, config: Config): void {
-  const deployConfig = Object.assign({}, defaultConfig, config)
-  console.log(deployConfig)
+type DeployConfig = typeof defaultConfig
+
+export default function (program: commander.Command, userConfig?: DeployConfig): void {
+  const config = Object.assign({}, defaultConfig, userConfig) as DeployConfig
 
   program
     .command('deploy [env]')
     .alias('dp')
     .usage('deploy|dp <dev|rc|prod> [options]')
-    .description('项目部署指令')
-    .option('-d, --date [tpl]', '日期格式', 'MMDDHHmm')
-    .option('-v <version>', '项目版本号')
-    .option('--init <url>', 'upstream 仓库地址')
+    .description(lang.command.desc)
+    .option('-d, --date [tpl]', lang.command.dateTpl, config.dataTpl)
+    .option('-v <version>', lang.command.version)
+    .option('--init <url>', lang.command.upstreamUrl)
     .action((env, options) => {
       checkGit()
       if (options.init) {
-        init(options.init)
+        init(options.init, config)
       } else {
-        deploy(env, options.date, options.v)
+        deploy(env, options.date, options.v, config)
       }
     })
 }

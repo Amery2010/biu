@@ -11,7 +11,7 @@ import { readFileData } from './helper'
 const pkg = readFileData(path.resolve(__dirname, '../package.json'))
 
 program.version(pkg.version)
-deploy(program, config)
+deploy(program, config?.deploy)
 commit(program, config)
 gitflow(program, config)
 program.parse(process.argv)

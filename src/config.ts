@@ -1,29 +1,33 @@
 import fs from 'fs'
 import path from 'path'
 
-type LangType = 'en-US' | 'zh-CN'
+enum Lang {
+  'en-US' = 'English',
+  'zh-CN' = 'Chinese',
+}
+type LangType = keyof typeof Lang
 
 export interface DeployConfig {
-  upstream?: string
-  dataTpl?: string
+  upstream: string
+  dataTpl: string
 }
 
 export interface GitFlowConfig {
-  upstream?: string
-  perfix?: {
+  upstream: string
+  perfix: {
     feature: string
     hotfix: string
     release: string
   }
 }
 
-export interface DefaultConfig {
+export interface Config {
   lang: LangType
   gitflow?: GitFlowConfig
   deploy?: DeployConfig
 }
 
-const defaultConfig: DefaultConfig = {
+const defaultConfig: Config = {
   lang: 'zh-CN',
 }
 
@@ -34,7 +38,7 @@ const defaultConfig: DefaultConfig = {
  * 最后才会使用默认配置信息
  * @returns 配置信息
  */
-function getConfig(): DefaultConfig {
+function getConfig(): Config {
   const configFilePath = path.resolve(__dirname, '.biurc')
   if (fs.existsSync(configFilePath)) {
     return Object.assign(defaultConfig, JSON.parse(fs.readFileSync(configFilePath, 'utf-8')))

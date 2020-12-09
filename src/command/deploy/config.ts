@@ -1,10 +1,8 @@
-import { DefaultConfig, DeployConfig } from '../../config'
+import config, { DeployConfig } from '../../config'
 
 export const defaultConfig: DeployConfig = {
   upstream: 'upstream',
   dataTpl: 'MMDDHHmm',
 }
 
-export default interface Config extends DefaultConfig {
-  deploy?: DeployConfig
-}
+export const lang = config.lang
