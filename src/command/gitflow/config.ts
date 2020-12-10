@@ -1,4 +1,4 @@
-import { DefaultConfig, GitFlowConfig } from '../../config'
+import config, { GitFlowConfig } from '../../config'
 
 export const defaultConfig: GitFlowConfig = {
   upstream: 'origin',
@@ -9,6 +9,4 @@ export const defaultConfig: GitFlowConfig = {
   },
 }
 
-export default interface Config extends DefaultConfig {
-  gitflow?: GitFlowConfig
-}
+export const lang = config.lang

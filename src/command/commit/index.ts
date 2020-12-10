@@ -1,13 +1,10 @@
 import commander from 'commander'
 import { checkGit } from '../../helper/git'
 import commit from './main'
-import Config from './config'
 
 import { COMMIT_TYPES } from './constant'
 
-export default function (program: commander.Command, config: Config): void {
-  console.log(config)
-
+export default function (program: commander.Command): void {
   program
     .command('commit [message]')
     .alias('cm')

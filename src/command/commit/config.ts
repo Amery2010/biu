@@ -1,3 +1,3 @@
-import { DefaultConfig } from '../../config'
+import config from '../../config'
 
-export default DefaultConfig
+export const lang = config.lang

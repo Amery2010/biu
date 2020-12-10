@@ -1,5 +1,3 @@
-import { DefaultConfig, GitFlowConfig } from '../../config';
+import { GitFlowConfig } from '../../config';
 export declare const defaultConfig: GitFlowConfig;
-export default interface Config extends DefaultConfig {
-    gitflow?: GitFlowConfig;
-}
+export declare const lang: "en-US" | "zh-CN";

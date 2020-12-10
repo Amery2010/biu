@@ -1,2 +1,1 @@
-import { DefaultConfig } from '../../config';
-export default DefaultConfig;
+export declare const lang: "en-US" | "zh-CN";

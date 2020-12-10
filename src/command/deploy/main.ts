@@ -3,6 +3,7 @@ import { prompt } from 'inquirer'
 import dayjs from 'dayjs'
 import { print, handleError } from '../../helper'
 import { getCurentBranchName, getRemotes } from '../../helper/git'
+import i18n from './locals'
 
 import { defaultConfig } from './config'
 
@@ -36,11 +37,21 @@ function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: st
 export function init(url: string, options: typeof defaultConfig): void {
   const remotes = getRemotes()
   if (remotes.includes('upstream')) {
-    print(`the ${options.upstream}  remote already exists`, 'warning')
+    print(
+      i18n.t('initRemoteExists', {
+        upstream: options.upstream,
+      }),
+      'warning'
+    )
   } else {
-    print('start to initialize the project upstream...')
+    print(i18n.t('initStart'))
     shelljs.exec(`git remote add ${options.upstream} ${url}`)
-    print(`the ${options.upstream} remote is added successfully`, 'success')
+    print(
+      i18n.t('initSuccess', {
+        upstream: options.upstream,
+      }),
+      'success'
+    )
   }
 }
 
@@ -51,9 +62,18 @@ export function init(url: string, options: typeof defaultConfig): void {
  */
 function syncBranch(upstream: string, branchName: string): void {
   if (!getRemotes().includes(upstream)) {
-    handleError(`cannot find ${upstream} remote, please set up ${upstream} remote first.\n biu dp --init <url>`)
+    handleError(
+      i18n.t('syncBranchError', {
+        upstream,
+      })
+    )
   }
-  print(`pull ${upstream} ${branchName} branch...`)
+  print(
+    i18n.t('syncBranch', {
+      upstream,
+      branchName,
+    })
+  )
   if (getCurentBranchName() !== branchName) {
     shelljs.exec(`git fetch ${upstream} ${branchName}`)
     shelljs.exec(`git checkout -b ${branchName} ${upstream}/${branchName}`)
@@ -69,10 +89,19 @@ function syncBranch(upstream: string, branchName: string): void {
  * @param tagName 标签名
  */
 function pushTagToUpstream(upstream: string, tagName: string): void {
-  print(`push tag to ${upstream}...`)
+  print(
+    i18n.t('pushTagToUpstream', {
+      upstream,
+    })
+  )
   shelljs.exec(`git tag ${tagName}`)
   shelljs.exec(`git push ${upstream} ${tagName}`)
-  print(`${tagName} was pushed success`, 'success')
+  print(
+    i18n.t('pushTagToUpstreamSuccess', {
+      tagName,
+    }),
+    'success'
+  )
 }
 
 /**
@@ -104,7 +133,7 @@ export async function deploy(
         {
           type: 'confirm',
           name: 'confirm',
-          message: 'Are you sure to deploy to the production environment?',
+          message: i18n.t('deployToProdConfirm'),
           default: false,
         },
       ])
@@ -112,18 +141,22 @@ export async function deploy(
         syncBranch(options.upstream, 'master')
         pushTagToUpstream(options.upstream, getTagString('prod', dateTpl, version))
       } else {
-        print('you canceled the command to deploy to the production environment', 'warning')
+        print(i18n.t('cancelDeployToProd'), 'warning')
       }
       break
     default:
       if (env) {
-        handleError(`unknown env "${env}"`)
+        handleError(
+          i18n.t('unknownEnvTip', {
+            env,
+          })
+        )
       } else {
         const answers = await prompt([
           {
             type: 'list',
             name: 'type',
-            message: 'Please select the environment you want to deploy.',
+            message: i18n.t('selectEnvTip'),
             choices: ['develop', 'release', 'production'],
             default: 'develop',
           },

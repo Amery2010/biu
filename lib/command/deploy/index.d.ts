@@ -1,3 +1,5 @@
 import commander from 'commander';
-import Config from './config';
-export default function (program: commander.Command, config: Config): void;
+import { defaultConfig } from './config';
+declare type DeployConfig = typeof defaultConfig;
+export default function (program: commander.Command, deployConfig?: DeployConfig): void;
+export {};

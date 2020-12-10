@@ -5,7 +5,7 @@ enum Lang {
   'en-US' = 'English',
   'zh-CN' = 'Chinese',
 }
-type LangType = keyof typeof Lang
+export type LangType = keyof typeof Lang
 
 export interface DeployConfig {
   upstream: string

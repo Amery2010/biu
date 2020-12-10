@@ -12,6 +12,6 @@ const pkg = readFileData(path.resolve(__dirname, '../package.json'))
 
 program.version(pkg.version)
 deploy(program, config?.deploy)
-commit(program, config)
-gitflow(program, config)
+commit(program)
+gitflow(program, config?.gitflow)
 program.parse(process.argv)

@@ -1,5 +1,3 @@
-import { DefaultConfig, DeployConfig } from '../../config';
+import { DeployConfig } from '../../config';
 export declare const defaultConfig: DeployConfig;
-export default interface Config extends DefaultConfig {
-    deploy?: DeployConfig;
-}
+export declare const lang: "en-US" | "zh-CN";

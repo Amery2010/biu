@@ -1,11 +1,13 @@
 import commander from 'commander'
 import { checkGit } from '../../helper/git'
 import { init, start, finish, gitflow } from './main'
-import Config, { defaultConfig } from './config'
+import { defaultConfig } from './config'
 
-export default function (program: commander.Command, config: Config): void {
-  const gitflowConfig = Object.assign({}, defaultConfig, config)
-  console.log(gitflowConfig)
+type GitflowConfig = typeof defaultConfig
+
+export default function (program: commander.Command, gitflowConfig?: GitflowConfig): void {
+  const config = Object.assign({}, defaultConfig, gitflowConfig) as GitflowConfig
+  console.log(config)
 
   program
     .command('gitflow [mode]')
