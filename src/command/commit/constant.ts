@@ -1,3 +1,5 @@
+import i18n from './locals'
+
 interface CommitType {
   name: string
   alias: string
@@ -12,7 +14,7 @@ export const COMMIT_TYPES: CommitTypes = {
   feat: {
     name: 'feat',
     alias: 'f',
-    description: '添加新功能',
+    description: i18n.t('featDesc'),
   },
   fix: {
     name: 'fix',

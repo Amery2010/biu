@@ -3,6 +3,7 @@ import { prompt } from 'inquirer'
 import chalk from 'chalk'
 import { print, handleError } from '../../helper'
 import { getCurentBranchName, getLocalStatus } from '../../helper/git'
+import i18n from './locals'
 
 import { COMMIT_TYPES } from './constant'
 
@@ -36,20 +37,20 @@ export default async function commit(message: string, type?: string, scope?: str
         {
           type: 'confirm',
           name: 'confirm',
-          message: 'Do you want to commit locally modified files?',
+          message: i18n.t('localStatusConfirm'),
         },
       ])
       if (answers.confirm) {
         shelljs.exec('git add .')
       } else {
-        print('please commit locally modified files or checkout first', 'warning')
+        print(i18n.t('localStatusWarning'), 'warning')
         shelljs.exit(1)
       }
     }
     shelljs.exec(`git commit -m '${commitMessage}'`)
-    print('commit message success', 'success')
+    print(i18n.t('commitSuccess'), 'success')
   } else {
-    print(chalk.green(`current branch is `) + chalk.red(getCurentBranchName()))
+    print(chalk.green(i18n.t('currentBranchDesc')) + chalk.red(getCurentBranchName()))
     const choices: string[] = []
     Object.keys(COMMIT_TYPES).forEach((name) => {
       choices.push(name.padEnd(15, ' ') + COMMIT_TYPES[name].description)
@@ -58,26 +59,26 @@ export default async function commit(message: string, type?: string, scope?: str
       {
         type: 'list',
         name: 'type',
-        message: 'Please choose a commit type.',
+        message: i18n.t('selectTypeMsg'),
         choices,
       },
       {
         type: 'input',
         name: 'scope',
-        message: 'Please enter the commit scope.',
+        message: i18n.t('inputScopeMsg'),
         default: '',
       },
       {
         type: 'input',
         name: 'message',
-        message: 'Please enter the commit message.',
+        message: i18n.t('inputDescMsg'),
       },
     ])
     if (answers.message) {
       const commitType = answers.type.split(' ')[0]
       commit(answers.message, commitType, answers.scope)
     } else {
-      handleError('commit message is required!')
+      handleError(i18n.t('commitError'))
     }
   }
 }

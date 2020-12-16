@@ -1,6 +1,7 @@
 import commander from 'commander'
 import { checkGit } from '../../helper/git'
 import commit from './main'
+import i18n from './locals'
 
 import { COMMIT_TYPES } from './constant'
 
@@ -9,7 +10,7 @@ export default function (program: commander.Command): void {
     .command('commit [message]')
     .alias('cm')
     .usage('commit|cm <message> [options]')
-    .description('git 提交指令')
+    .description(i18n.t('commandDesc'))
     .option(`-${COMMIT_TYPES.feat.alias}, --${COMMIT_TYPES.feat.name} [scope]`, COMMIT_TYPES.feat.description)
     .option(`-${COMMIT_TYPES.fix.alias}, --${COMMIT_TYPES.fix.name} [scope]`, COMMIT_TYPES.fix.description)
     .option(`-${COMMIT_TYPES.style.alias}, --${COMMIT_TYPES.style.name} [scope]`, COMMIT_TYPES.style.description)
