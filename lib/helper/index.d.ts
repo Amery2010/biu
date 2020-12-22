@@ -16,7 +16,7 @@ export declare function handleError(message: string): void;
  * @returns 文件内容
  * @throws 错误提示
  */
-export declare function readFileData(path: string): any;
+export declare function readFileData(path: string): unknown;
 /**
  * 获取项目版本号
  * @returns 项目版本号

@@ -8,9 +8,14 @@ import gitflow from './command/gitflow'
 
 import { readFileData } from './helper'
 
-const pkg = readFileData(path.resolve(__dirname, '../package.json'))
+interface Package {
+  [name: string]: unknown
+  version?: string
+}
 
-program.version(pkg.version)
+const pkg = readFileData(path.resolve(__dirname, '../package.json')) as Package
+
+program.version(pkg?.version || '0.0.0')
 deploy(program, config?.deploy)
 commit(program)
 gitflow(program, config?.gitflow)

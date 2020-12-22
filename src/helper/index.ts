@@ -4,6 +4,11 @@ import shelljs from 'shelljs'
 import chalk from 'chalk'
 import i18n from '../locals'
 
+interface Package {
+  [name: string]: unknown
+  version?: string
+}
+
 /**
  * 输出信息
  * @param message 信息内容
@@ -43,7 +48,7 @@ export function handleError(message: string): void {
  * @returns 文件内容
  * @throws 错误提示
  */
-export function readFileData(path: string): any {
+export function readFileData(path: string): unknown {
   if (fs.existsSync(path)) {
     return JSON.parse(fs.readFileSync(path, 'utf-8'))
   } else {
@@ -61,7 +66,7 @@ export function readFileData(path: string): any {
  * @throws 错误提示
  */
 export function getProjectVersion(): string | void {
-  const pkg = readFileData(path.resolve(process.cwd(), './package.json'))
+  const pkg = readFileData(path.resolve(process.cwd(), './package.json')) as Package
   if (pkg.version) {
     return pkg.version
   } else {
