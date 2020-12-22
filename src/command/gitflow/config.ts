@@ -2,7 +2,7 @@ import config, { GitFlowConfig } from '../../config'
 
 export const defaultConfig: GitFlowConfig = {
   upstream: 'origin',
-  perfix: {
+  prefix: {
     feature: 'feature',
     hotfix: 'hotfix',
     release: 'release',

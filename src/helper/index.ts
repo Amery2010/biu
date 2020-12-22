@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import shelljs from 'shelljs'
 import chalk from 'chalk'
+import i18n from '../locals'
 
 /**
  * 输出信息
@@ -46,7 +47,11 @@ export function readFileData(path: string): any {
   if (fs.existsSync(path)) {
     return JSON.parse(fs.readFileSync(path, 'utf-8'))
   } else {
-    handleError(`could not find ${path} file`)
+    handleError(
+      i18n.t('readFileError', {
+        path,
+      })
+    )
   }
 }
 
@@ -60,6 +65,6 @@ export function getProjectVersion(): string | void {
   if (pkg.version) {
     return pkg.version
   } else {
-    handleError('version is not defined in the `package.json` file')
+    handleError(i18n.t('getProjectVersionError'))
   }
 }

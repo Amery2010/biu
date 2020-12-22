@@ -17,19 +17,19 @@ export default function (program: commander.Command, gitflowConfig?: GitflowConf
     .option(
       '-f, --feature <name>',
       i18n.t('subCommandDesc', {
-        prefix: config.perfix.feature,
+        prefix: config.prefix.feature,
       })
     )
     .option(
       '-r, --release <name>',
       i18n.t('subCommandDesc', {
-        prefix: config.perfix.release,
+        prefix: config.prefix.release,
       })
     )
     .option(
       '-x, --hotfix <name>',
       i18n.t('subCommandDesc', {
-        prefix: config.perfix.hotfix,
+        prefix: config.prefix.hotfix,
       })
     )
     .action((mode, options) => {
@@ -41,20 +41,20 @@ export default function (program: commander.Command, gitflowConfig?: GitflowConf
           break
         case 'start':
           if (gitFlowType) {
-            start(config.upstream, config.perfix, gitFlowType, options[gitFlowType])
+            start(config.upstream, config.prefix, gitFlowType, options[gitFlowType])
           } else {
-            start(config.upstream, config.perfix)
+            start(config.upstream, config.prefix)
           }
           break
         case 'finish':
           if (gitFlowType) {
-            finish(config.upstream, config.perfix, gitFlowType, options[gitFlowType])
+            finish(config.upstream, config.prefix, gitFlowType, options[gitFlowType])
           } else {
-            finish(config.upstream, config.perfix)
+            finish(config.upstream, config.prefix)
           }
           break
         default:
-          gitflow(mode, config.upstream, config.perfix)
+          gitflow(mode, config.upstream, config.prefix)
           break
       }
     })

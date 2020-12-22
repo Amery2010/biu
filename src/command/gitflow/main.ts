@@ -128,7 +128,7 @@ export function init(upstream: string): void {
   }
 }
 
-type Perfix = {
+type Prefix = {
   [name: string]: string
 }
 
@@ -139,22 +139,22 @@ type Perfix = {
  * @param type 工作流类型
  * @param name 分支名称
  */
-export async function start(upstream: string, perfix: Perfix, type?: string, name?: string): Promise<void> {
+export async function start(upstream: string, prefix: Prefix, type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
     if (!name) handleError(i18n.t('missingBranchName'))
     switch (type) {
       case 'feature':
         pullRemoteBranch(`${upstream}/develop`)
-        checkoutBranch(`${perfix.feature}/${name}`, `${upstream}/develop`)
+        checkoutBranch(`${prefix.feature}/${name}`, `${upstream}/develop`)
         break
       case 'release':
         pullRemoteBranch(`${upstream}/develop`)
-        checkoutBranch(`${perfix.release}/${name}`, `${upstream}/develop`)
+        checkoutBranch(`${prefix.release}/${name}`, `${upstream}/develop`)
         break
       case 'hotfix':
         pullRemoteBranch(`${upstream}/master`)
-        checkoutBranch(`${perfix.hotfix}/${name}`, `${upstream}/master`)
+        checkoutBranch(`${prefix.hotfix}/${name}`, `${upstream}/master`)
         break
       default:
         handleError(
@@ -178,7 +178,7 @@ export async function start(upstream: string, perfix: Perfix, type?: string, nam
         message: i18n.t('inputBranchName'),
       },
     ])
-    start(upstream, perfix, answers.type, answers.name)
+    start(upstream, prefix, answers.type, answers.name)
   }
 }
 
@@ -189,7 +189,7 @@ export async function start(upstream: string, perfix: Perfix, type?: string, nam
  * @param type 工作流类型
  * @param name 分支名称
  */
-export async function finish(upstream: string, prefix: Perfix, type?: string, name?: string): Promise<void> {
+export async function finish(upstream: string, prefix: Prefix, type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
     if (!name) handleError(i18n.t('missingBranchName'))
@@ -275,7 +275,7 @@ export async function finish(upstream: string, prefix: Perfix, type?: string, na
  * @param upstream 远端仓库名称
  * @param prefix 分支前缀
  */
-export async function gitflow(mode: GitFlowMode, upstream: string, perfix: Perfix): Promise<void> {
+export async function gitflow(mode: GitFlowMode, upstream: string, prefix: Prefix): Promise<void> {
   if (mode) {
     handleError(
       i18n.t('unknownMode', {
@@ -293,9 +293,9 @@ export async function gitflow(mode: GitFlowMode, upstream: string, perfix: Perfi
     ])
     switch (answers.type) {
       case 'start':
-        return start(upstream, perfix)
+        return start(upstream, prefix)
       case 'finish':
-        return finish(upstream, perfix)
+        return finish(upstream, prefix)
       case 'init':
         return init(upstream)
       default:
