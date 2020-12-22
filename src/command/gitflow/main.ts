@@ -8,6 +8,7 @@ import {
   getRemoteBranches,
   pullRemoteBranch,
 } from '../../helper/git'
+import i18n from './locals'
 
 type GitFlowMode = 'init' | 'start' | 'finish'
 
@@ -17,9 +18,18 @@ type GitFlowMode = 'init' | 'start' | 'finish'
  * @param source 来源分支名
  */
 function checkoutBranch(target: string, source: string) {
-  print(`checkout the "${target}" branch...`)
+  print(
+    i18n.t('checkoutBranch', {
+      target,
+    })
+  )
   shelljs.exec(`git checkout -b ${target} ${source}`)
-  print(`create the "${target}" branch successfully`, 'success')
+  print(
+    i18n.t('checkoutBranchSuccess', {
+      target,
+    }),
+    'success'
+  )
 }
 
 /**
@@ -29,78 +39,129 @@ function checkoutBranch(target: string, source: string) {
  * @throws 抛出合并错误
  */
 function mergeBranch(target: string, source: string): void {
-  print(`merge the "${source}" branch to "${target}" branch...`)
+  print(
+    i18n.t('mergeBranch', {
+      target,
+      source,
+    })
+  )
   if (shelljs.exec(`git merge ${source}`).stderr) {
-    handleError(`an error occurred while merging the "${source}" branch to "master" branch`)
+    handleError(
+      i18n.t('mergeBranchError', {
+        target,
+        source,
+      })
+    )
   }
   shelljs.exec(`git push origin ${target}`)
-  print(`merged the "${source}" branch to "${target}" branch`, 'success')
+  print(
+    i18n.t('mergeBranchSuccess', {
+      target,
+      source,
+    }),
+    'success'
+  )
 }
 
 /**
  * 在完成操作后删除分支
  * @param branchName 分支名
  */
-function deleteBranchAfterFinishd(branchName: string): void {
-  print(`delete the "${branchName}" branch...`)
+function cleanBranch(branchName: string): void {
+  print(
+    i18n.t('cleanBranch', {
+      branchName,
+    })
+  )
   shelljs.exec(`git branch -d ${branchName}`)
-  print(`finished the "${branchName}" workflow successfully`, 'success')
+  print(
+    i18n.t('cleanBranchSuccess', {
+      branchName,
+    }),
+    'success'
+  )
 }
 
 /**
  * 推送 Tag
+ * @param upstream 远端仓库名称
  * @param tagName tag 名称
  * @param message 备注信息
  */
-function pushTag(tagName: string, message: string): void {
-  print('create and push tag to origin...')
+function pushTag(upstream: string, tagName: string, message: string): void {
+  print(
+    i18n.t('pushTag', {
+      upstream,
+    })
+  )
   shelljs.exec(`git tag ${tagName} -m "${message}"`)
-  shelljs.exec(`git push origin ${tagName}`)
-  print(`tag ${tagName} was pushed success`, 'success')
+  shelljs.exec(`git push ${upstream} ${tagName}`)
+  print(
+    i18n.t('pushTahSuccess', {
+      tagName,
+    }),
+    'success'
+  )
 }
 
 /**
  * 初始化仓库，创建 develop 分支
+ * @param upstream 远端仓库名称
  */
-export function init(): void {
+export function init(upstream: string): void {
   checkLocalStatus()
   const localBranches = getLocalBranches()
   if (!localBranches.includes('develop')) {
     const remoteBranches = getRemoteBranches()
-    if (remoteBranches.includes('develop')) {
+    if (remoteBranches.includes(`${upstream}/develop`)) {
       shelljs.exec('git pull')
     } else {
       if (getCurentBranchName() !== 'master') {
-        shelljs.exec('git checkout master')
+        shelljs.exec(`git checkout ${upstream}/master`)
       }
       shelljs.exec('git pull')
-      shelljs.exec('git checkout -b develop master')
+      shelljs.exec(`git checkout -b develop ${upstream}/master`)
     }
-    print('the current repository initialized successfully', 'success')
+    print(i18n.t('initRepo'), 'success')
   } else {
-    print('the current repository has been initialized', 'warning')
+    print(i18n.t('initRepoWarning'), 'warning')
   }
 }
 
-export async function start(type?: string, name?: string): Promise<void> {
+type Perfix = {
+  [name: string]: string
+}
+
+/**
+ * 开始 gitflow 工作流
+ * @param upstream 远端仓库名称
+ * @param prefix 分支前缀
+ * @param type 工作流类型
+ * @param name 分支名称
+ */
+export async function start(upstream: string, perfix: Perfix, type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
-    if (!name) handleError('invalid branch name')
+    if (!name) handleError(i18n.t('missingBranchName'))
     switch (type) {
       case 'feature':
-        pullRemoteBranch('develop')
-        checkoutBranch(`feature/${name}`, 'develop')
+        pullRemoteBranch(`${upstream}/develop`)
+        checkoutBranch(`${perfix.feature}/${name}`, `${upstream}/develop`)
         break
       case 'release':
-        pullRemoteBranch('develop')
-        checkoutBranch(`release/${name}`, 'develop')
+        pullRemoteBranch(`${upstream}/develop`)
+        checkoutBranch(`${perfix.release}/${name}`, `${upstream}/develop`)
         break
       case 'hotfix':
-        pullRemoteBranch('master')
-        checkoutBranch(`hotfix/${name}`, 'master')
+        pullRemoteBranch(`${upstream}/master`)
+        checkoutBranch(`${perfix.hotfix}/${name}`, `${upstream}/master`)
         break
       default:
-        handleError(`unknown type "${type}"`)
+        handleError(
+          i18n.t('unknownType', {
+            type,
+          })
+        )
         break
     }
   } else {
@@ -108,47 +169,76 @@ export async function start(type?: string, name?: string): Promise<void> {
       {
         type: 'list',
         name: 'type',
-        message: 'Please choose a gitflow type.',
+        message: i18n.t('selectGitflowType'),
         choices: ['feature', 'release', 'hotfix'],
       },
       {
         type: 'input',
         name: 'name',
-        message: `Please enter the branch name.`,
+        message: i18n.t('inputBranchName'),
       },
     ])
-    start(answers.type, answers.name)
+    start(upstream, perfix, answers.type, answers.name)
   }
 }
 
-export async function finish(type?: string, name?: string): Promise<void> {
+/**
+ * 完成 gitflow 工作流
+ * @param upstream 远端仓库名称
+ * @param prefix 分支前缀
+ * @param type 工作流类型
+ * @param name 分支名称
+ */
+export async function finish(upstream: string, prefix: Perfix, type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
-    if (!name) handleError('invalid branch name')
+    if (!name) handleError(i18n.t('missingBranchName'))
     switch (type) {
       case 'feature':
-        pullRemoteBranch('develop')
-        mergeBranch('develop', `feature/${name}`)
-        deleteBranchAfterFinishd(`feature/${name}`)
+        pullRemoteBranch(`${upstream}/develop`)
+        mergeBranch(`${upstream}/develop`, `${prefix.feature}/${name}`)
+        cleanBranch(`${prefix.feature}/${name}`)
+        print(
+          i18n.t('finishedWorkflow', {
+            type: 'feature',
+          }),
+          'success'
+        )
         break
       case 'release':
-        pullRemoteBranch('develop')
-        mergeBranch('develop', `release/${name}`)
-        pullRemoteBranch('master')
-        mergeBranch('master', `release/${name}`)
-        pushTag(`v${name}`, `release ${name}`)
-        deleteBranchAfterFinishd(`release/${name}`)
+        pullRemoteBranch(`${upstream}/develop`)
+        mergeBranch(`${upstream}/develop`, `${prefix.release}/${name}`)
+        pullRemoteBranch(`${upstream}/master`)
+        mergeBranch(`${upstream}/master`, `${prefix.release}/${name}`)
+        pushTag(upstream, `v${name}`, `${prefix.release} ${name}`)
+        cleanBranch(`${prefix.release}/${name}`)
+        print(
+          i18n.t('finishedWorkflow', {
+            type: 'release',
+          }),
+          'success'
+        )
         break
       case 'hotfix':
-        pullRemoteBranch('master')
-        mergeBranch('master', `hotfix/${name}`)
-        pullRemoteBranch('develop')
-        mergeBranch('develop', `hotfix/${name}`)
-        pushTag(`v${getProjectVersion()}`, `hotfix ${name}`)
-        deleteBranchAfterFinishd(`hotfix/${name}`)
+        pullRemoteBranch(`${upstream}/master`)
+        mergeBranch(`${upstream}/master`, `${prefix.hotfix}/${name}`)
+        pullRemoteBranch(`${upstream}/develop`)
+        mergeBranch(`${upstream}/develop`, `${prefix.hotfix}/${name}`)
+        pushTag(upstream, `v${getProjectVersion()}`, `${prefix.hotfix} ${name}`)
+        cleanBranch(`${prefix.hotfix}/${name}`)
+        print(
+          i18n.t('finishedWorkflow', {
+            type: 'hotfix',
+          }),
+          'success'
+        )
         break
       default:
-        handleError(`unknown type "${type}"`)
+        handleError(
+          i18n.t('unknownType', {
+            type,
+          })
+        )
         break
     }
   } else {
@@ -156,7 +246,7 @@ export async function finish(type?: string, name?: string): Promise<void> {
       {
         type: 'list',
         name: 'type',
-        message: 'Please choose the gitflow type.',
+        message: i18n.t('selectGitflowType'),
         choices: ['feature', 'release', 'hotfix'],
       },
     ])
@@ -171,33 +261,43 @@ export async function finish(type?: string, name?: string): Promise<void> {
       {
         type: 'list',
         name: 'name',
-        message: 'Please choose the completed branch.',
+        message: i18n.t('selectFinishedBranch'),
         choices,
       },
     ])
-    finish(gitflow.type, answers.name)
+    finish(upstream, prefix, gitflow.type, answers.name)
   }
 }
 
-export async function gitflow(mode: GitFlowMode): Promise<void> {
+/**
+ * 选择 gitflow 工作流
+ * @param mode gitflow 类型
+ * @param upstream 远端仓库名称
+ * @param prefix 分支前缀
+ */
+export async function gitflow(mode: GitFlowMode, upstream: string, perfix: Perfix): Promise<void> {
   if (mode) {
-    handleError(`unknown mode "${mode}"`)
+    handleError(
+      i18n.t('unknownMode', {
+        mode,
+      })
+    )
   } else {
     const answers = await prompt([
       {
         type: 'list',
         name: 'type',
-        message: 'Please choose a gitflow mode.',
+        message: i18n.t('selectGitflowMode'),
         choices: ['start', 'finish', 'init'],
       },
     ])
     switch (answers.type) {
       case 'start':
-        return start()
+        return start(upstream, perfix)
       case 'finish':
-        return finish()
+        return finish(upstream, perfix)
       case 'init':
-        return init()
+        return init(upstream)
       default:
         break
     }

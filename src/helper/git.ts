@@ -1,5 +1,6 @@
 import shelljs from 'shelljs'
 import { handleError } from './index'
+import i18n from '../locals'
 
 /**
  * 检查系统是否已经安装 git
@@ -7,7 +8,7 @@ import { handleError } from './index'
  */
 export function checkGit(): void {
   if (!shelljs.which('git')) {
-    handleError('This command depends on `git`')
+    handleError(i18n.t('needGit'))
   }
 }
 
@@ -78,7 +79,7 @@ export function checkLocalStatus(): void {
   const localStatus = getLocalStatus()
   if (localStatus.length > 0) {
     shelljs.echo(localStatus.join('\n'))
-    handleError('please commit locally modified files or checkout first')
+    handleError(i18n.t('checkLocalStatusError'))
   }
 }
 

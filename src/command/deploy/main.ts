@@ -5,8 +5,6 @@ import { print, handleError } from '../../helper'
 import { getCurentBranchName, getRemotes } from '../../helper/git'
 import i18n from './locals'
 
-import { defaultConfig } from './config'
-
 type EnvType = 'dev' | 'rc' | 'prod' | 'develop' | 'release' | 'production'
 
 /**
@@ -34,21 +32,21 @@ function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: st
  * @param upstream 远端仓库
  * @param url 仓库地址
  */
-export function init(url: string, options: typeof defaultConfig): void {
+export function init(upstream: string, url: string): void {
   const remotes = getRemotes()
   if (remotes.includes('upstream')) {
     print(
       i18n.t('initRemoteExists', {
-        upstream: options.upstream,
+        upstream,
       }),
       'warning'
     )
   } else {
     print(i18n.t('initStart'))
-    shelljs.exec(`git remote add ${options.upstream} ${url}`)
+    shelljs.exec(`git remote add ${upstream} ${url}`)
     print(
       i18n.t('initSuccess', {
-        upstream: options.upstream,
+        upstream,
       }),
       'success'
     )
@@ -111,21 +109,16 @@ function pushTagToUpstream(upstream: string, tagName: string): void {
  * @param dateTpl 日期格式模板
  * @param version 项目版本号
  */
-export async function deploy(
-  env: EnvType,
-  dateTpl: string,
-  version: string,
-  options: typeof defaultConfig
-): Promise<void> {
+export async function deploy(upstream: string, env: EnvType, dateTpl: string, version: string): Promise<void> {
   switch (env) {
     case 'dev':
     case 'develop':
-      pushTagToUpstream(options.upstream, getTagString('dev', dateTpl, version))
+      pushTagToUpstream(upstream, getTagString('dev', dateTpl, version))
       break
     case 'rc':
     case 'release':
-      syncBranch(options.upstream, 'develop')
-      pushTagToUpstream(options.upstream, getTagString('rc', dateTpl, version))
+      syncBranch(upstream, 'develop')
+      pushTagToUpstream(upstream, getTagString('rc', dateTpl, version))
       break
     case 'prod':
     case 'production':
@@ -138,8 +131,8 @@ export async function deploy(
         },
       ])
       if (answers.confirm) {
-        syncBranch(options.upstream, 'master')
-        pushTagToUpstream(options.upstream, getTagString('prod', dateTpl, version))
+        syncBranch(upstream, 'master')
+        pushTagToUpstream(upstream, getTagString('prod', dateTpl, version))
       } else {
         print(i18n.t('cancelDeployToProd'), 'warning')
       }
@@ -161,7 +154,7 @@ export async function deploy(
             default: 'develop',
           },
         ])
-        deploy(answers.type, dateTpl, version, options)
+        deploy(upstream, answers.type, dateTpl, version)
       }
       break
   }

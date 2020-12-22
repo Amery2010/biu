@@ -20,9 +20,9 @@ export default function (program: commander.Command, deployConfig?: DeployConfig
     .action((env, options) => {
       checkGit()
       if (options.init) {
-        init(options.init, config)
+        init(config.upstream, options.init)
       } else {
-        deploy(env, options.date, options.v, config)
+        deploy(config.upstream, env, options.date, options.v)
       }
     })
 }
