@@ -114,12 +114,12 @@ export function init(upstream: string): void {
   if (!localBranches.includes('develop')) {
     const remoteBranches = getRemoteBranches()
     if (remoteBranches.includes(`${upstream}/develop`)) {
-      shelljs.exec('git pull')
+      shelljs.exec(`git pull ${upstream}/develop`)
     } else {
       if (getCurentBranchName() !== 'master') {
         shelljs.exec(`git checkout ${upstream}/master`)
       }
-      shelljs.exec('git pull')
+      shelljs.exec(`git pull ${upstream}/master`)
       shelljs.exec(`git checkout -b develop ${upstream}/master`)
     }
     print(i18n.t('initRepo'), 'success')
