@@ -39,15 +39,15 @@ const defaultConfig: Config = {
  * @returns 配置信息
  */
 function getConfig(): Config {
-  const configFilePath = path.resolve(__dirname, '.biurc')
+  const configFilePath = path.resolve(process.cwd(), '.biurc')
   if (fs.existsSync(configFilePath)) {
-    return Object.assign(defaultConfig, JSON.parse(fs.readFileSync(configFilePath, 'utf-8')))
+    return Object.assign({}, defaultConfig, JSON.parse(fs.readFileSync(configFilePath, 'utf-8')))
   }
-  const pkgPath = path.resolve(__dirname, 'package.json')
+  const pkgPath = path.resolve(process.cwd(), 'package.json')
   if (fs.existsSync(pkgPath)) {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
     if ('biuConfig' in pkg) {
-      return Object.assign(defaultConfig, pkg.biuConfig)
+      return Object.assign({}, defaultConfig, pkg.biuConfig)
     }
   }
   return defaultConfig
