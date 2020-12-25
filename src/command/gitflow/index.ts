@@ -37,24 +37,24 @@ export default function (program: commander.Command, gitflowConfig?: GitflowConf
       const gitFlowType = ['feature', 'release', 'hotfix'].find((type) => type in options)
       switch (mode) {
         case 'init':
-          init(config.upstream)
+          init()
           break
         case 'start':
           if (gitFlowType) {
-            start(config.upstream, config.prefix, gitFlowType, options[gitFlowType])
+            start(config.prefix, gitFlowType, options[gitFlowType])
           } else {
-            start(config.upstream, config.prefix)
+            start(config.prefix)
           }
           break
         case 'finish':
           if (gitFlowType) {
-            finish(config.upstream, config.prefix, gitFlowType, options[gitFlowType])
+            finish(config.prefix, gitFlowType, options[gitFlowType])
           } else {
-            finish(config.upstream, config.prefix)
+            finish(config.prefix)
           }
           break
         default:
-          gitflow(mode, config.upstream, config.prefix)
+          gitflow(mode, config.prefix)
           break
       }
     })

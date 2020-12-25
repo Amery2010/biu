@@ -13,7 +13,6 @@ export interface DeployConfig {
 }
 
 export interface GitFlowConfig {
-  upstream: string
   prefix: {
     feature: string
     hotfix: string

@@ -8,7 +8,6 @@ export interface DeployConfig {
     dataTpl: string;
 }
 export interface GitFlowConfig {
-    upstream: string;
     prefix: {
         feature: string;
         hotfix: string;
