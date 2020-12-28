@@ -154,7 +154,7 @@ type Prefix = {
 export async function start(prefix: Prefix, type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
-    if (!name) handleError(i18n.t('missingBranchName'))
+    if (!name) return handleError(i18n.t('missingBranchName'))
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
@@ -190,7 +190,8 @@ export async function start(prefix: Prefix, type?: string, name?: string): Promi
         message: i18n.t('inputBranchName'),
       },
     ])
-    start(prefix, findType(answers.type), answers.name)
+    const gfType = findType(answers.type)
+    start(prefix, gfType, answers.name)
   }
 }
 
@@ -203,7 +204,7 @@ export async function start(prefix: Prefix, type?: string, name?: string): Promi
 export async function finish(prefix: Prefix, type?: string, name?: string): Promise<void> {
   checkLocalStatus()
   if (type) {
-    if (!name) handleError(i18n.t('missingBranchName'))
+    if (!name) return handleError(i18n.t('missingBranchName'))
     switch (type) {
       case 'feature':
         pullRemoteBranch('develop')
@@ -221,7 +222,7 @@ export async function finish(prefix: Prefix, type?: string, name?: string): Prom
         mergeBranch('develop', `${prefix.release}/${name}`)
         pullRemoteBranch('master')
         mergeBranch('master', `${prefix.release}/${name}`)
-        pushTag(`v${name}`, `${prefix.release} ${name}`)
+        pushTag(name, `${prefix.release} ${name}`)
         cleanBranch(`${prefix.release}/${name}`)
         print(
           i18n.t('finishedWorkflow', {
@@ -261,12 +262,13 @@ export async function finish(prefix: Prefix, type?: string, name?: string): Prom
         choices: [typeMap.feature, typeMap.release, typeMap.hotfix],
       },
     ])
+    const gfType = findType(gitflow.type)
     const localBranches = getLocalBranches()
     const choices: string[] = []
     localBranches.forEach((branch) => {
-      const branchPrefix = prefix[findType(gitflow.type)]
+      const branchPrefix = prefix[gfType]
       if (new RegExp(`^${branchPrefix}/`).test(branch)) {
-        choices.push(branch.substring(gitflow.type.length + 1))
+        choices.push(branch.substring(branchPrefix.length + 1))
       }
     })
     const answers = await prompt([
@@ -277,7 +279,7 @@ export async function finish(prefix: Prefix, type?: string, name?: string): Prom
         choices,
       },
     ])
-    finish(prefix, gitflow.type, answers.name)
+    finish(prefix, gfType, answers.name)
   }
 }
 
