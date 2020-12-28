@@ -50,10 +50,10 @@ export default async function commit(message: string, type?: string, scope?: str
     shelljs.exec(`git commit -m '${commitMessage}'`)
     print(i18n.t('commitSuccess'), 'success')
   } else {
-    print(chalk.green(i18n.t('currentBranchDesc')) + chalk.red(getCurentBranchName()))
+    print(i18n.t('currentBranchDesc') + chalk.green(getCurentBranchName()))
     const choices: string[] = []
     Object.keys(COMMIT_TYPES).forEach((name) => {
-      choices.push(name.padEnd(15, ' ') + COMMIT_TYPES[name].description)
+      choices.push(COMMIT_TYPES[name].description)
     })
     const answers = await prompt([
       {
@@ -75,7 +75,14 @@ export default async function commit(message: string, type?: string, scope?: str
       },
     ])
     if (answers.message) {
-      const commitType = answers.type.split(' ')[0]
+      const findType = (desc: string) => {
+        let type = ''
+        Object.values(COMMIT_TYPES).forEach((props) => {
+          if (props.description === desc) type = props.name
+        })
+        return type
+      }
+      const commitType = findType(answers.type)
       commit(answers.message, commitType, answers.scope)
     } else {
       handleError(i18n.t('commitError'))
