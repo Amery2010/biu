@@ -3,9 +3,9 @@
 Biu 是一个快速指令的脚本工具库，该工具集合了一些常用的构建指令，让你可以体验到“Biu 的一下就搞定了”的快感。
 
 ```shell
-yarn global add https://gitlab.jiliguala.com/npm/biu.git
+yarn global add biu
 # Or
-npm i -g https://gitlab.jiliguala.com/npm/biu.git
+npm i -g biu
 ```
 
 ### 获取指令帮助信息
@@ -63,6 +63,8 @@ biu commit '新增 Commit 指令' --feat 'commit'
 # Or
 biu cm '修复 bug' -x
 ```
+
+**注意：该指令不会将你的代码同步推送到远端仓库，本地修改内容的推送需要手动操作。**
 
 ### 提交类型
 
