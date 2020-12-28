@@ -3,9 +3,9 @@
 Biu 是一个快速指令的脚本工具库，该工具集合了一些常用的构建指令，让你可以体验到“Biu 的一下就搞定了”的快感。
 
 ```shell
-yarn global add biu
+yarn global add @meemo/biu
 # Or
-npm i -g biu
+npm i -g @meemo/biu
 ```
 
 ### 获取指令帮助信息
