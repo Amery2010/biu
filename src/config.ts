@@ -52,8 +52,4 @@ function getConfig(): Config {
   return defaultConfig
 }
 
-const config = getConfig()
-
-console.log(config)
-
-export default config
+export default getConfig()
