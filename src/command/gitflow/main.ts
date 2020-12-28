@@ -12,6 +12,25 @@ import i18n from './locals'
 
 type GitFlowMode = 'init' | 'start' | 'finish'
 
+const typeMap: {
+  feature: string
+  release: string
+  hotfix: string
+} = {
+  feature: i18n.t('feature'),
+  release: i18n.t('release'),
+  hotfix: i18n.t('hotfix'),
+}
+
+const findType = (desc: string) => {
+  for (const [key, val] of Object.entries(typeMap)) {
+    if (val === desc) {
+      return key
+    }
+  }
+  throw new Error(i18n.t('findTypeError'))
+}
+
 /**
  * 创建分支
  * @param target 目标分支名
@@ -163,7 +182,7 @@ export async function start(prefix: Prefix, type?: string, name?: string): Promi
         type: 'list',
         name: 'type',
         message: i18n.t('selectGitflowType'),
-        choices: ['feature', 'release', 'hotfix'],
+        choices: [typeMap.feature, typeMap.release, typeMap.hotfix],
       },
       {
         type: 'input',
@@ -171,7 +190,7 @@ export async function start(prefix: Prefix, type?: string, name?: string): Promi
         message: i18n.t('inputBranchName'),
       },
     ])
-    start(prefix, answers.type, answers.name)
+    start(prefix, findType(answers.type), answers.name)
   }
 }
 
@@ -239,13 +258,14 @@ export async function finish(prefix: Prefix, type?: string, name?: string): Prom
         type: 'list',
         name: 'type',
         message: i18n.t('selectGitflowType'),
-        choices: ['feature', 'release', 'hotfix'],
+        choices: [typeMap.feature, typeMap.release, typeMap.hotfix],
       },
     ])
     const localBranches = getLocalBranches()
     const choices: string[] = []
     localBranches.forEach((branch) => {
-      if (new RegExp(`^${gitflow.type}/`).test(branch)) {
+      const branchPrefix = prefix[findType(gitflow.type)]
+      if (new RegExp(`^${branchPrefix}/`).test(branch)) {
         choices.push(branch.substring(gitflow.type.length + 1))
       }
     })
@@ -279,15 +299,15 @@ export async function gitflow(mode: GitFlowMode, prefix: Prefix): Promise<void> 
         type: 'list',
         name: 'type',
         message: i18n.t('selectGitflowMode'),
-        choices: ['start', 'finish', 'init'],
+        choices: [i18n.t('start'), i18n.t('finish'), i18n.t('init')],
       },
     ])
     switch (answers.type) {
-      case 'start':
+      case i18n.t('start'):
         return start(prefix)
-      case 'finish':
+      case i18n.t('finish'):
         return finish(prefix)
-      case 'init':
+      case i18n.t('init'):
         return init()
       default:
         break

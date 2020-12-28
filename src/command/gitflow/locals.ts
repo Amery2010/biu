@@ -24,6 +24,13 @@ const locals = {
     selectFinishedBranch: 'Please choose the completed branch.',
     unknownMode: 'unknown mode "{{mode}}"',
     selectGitflowMode: 'Please choose a gitflow mode.',
+    start: 'start a new gitflow',
+    finish: 'finish a gitflow',
+    init: 'initialize',
+    feature: 'feature',
+    release: 'release',
+    hotfix: 'hotfix',
+    findTypeError: 'unknown type desc!',
   },
   'zh-CN': {
     commandDesc: '创建 gitflow 工作流',
@@ -47,6 +54,13 @@ const locals = {
     selectFinishedBranch: '请选择已完成的分支。',
     unknownMode: '未知模式 "{{mode}}"',
     selectGitflowMode: '请选择 gitflow 模式。',
+    start: '开始一项新的工作流',
+    finish: '完成一项工作流',
+    init: '初始化仓库',
+    feature: '功能',
+    release: '版本',
+    hotfix: '修复补丁',
+    findTypeError: '未知的类型描述！',
   },
 }
 
