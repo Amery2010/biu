@@ -3,7 +3,6 @@
   "version": "0.7.0",
   "description": "Biu is a script tool library for quick instructions.",
   "main": "lib/main.js",
-  "types": "./types.d.ts",
   "sideEffects": false,
   "repository": "https://github.com/Amery2010/biu.git",
   "author": "Amery <amery@xiangfa.org>",
