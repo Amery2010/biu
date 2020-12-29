@@ -34,7 +34,7 @@ function getTagString(env: 'dev' | 'rc' | 'prod', dateTpl?: string, version?: st
  */
 export function init(upstream: string, url: string): void {
   const remotes = getRemotes()
-  if (remotes.includes('upstream')) {
+  if (remotes.includes(upstream)) {
     print(
       i18n.t('initRemoteExists', {
         upstream,

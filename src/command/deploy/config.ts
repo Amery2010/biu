@@ -1,7 +1,7 @@
 import config, { DeployConfig } from '../../config'
 
 export const defaultConfig: DeployConfig = {
-  upstream: 'upstream',
+  upstream: 'origin',
   dataTpl: 'MMDDHHmm',
 }
 
