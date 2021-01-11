@@ -4,6 +4,7 @@ import I18n from '../../helper/i18n'
 const locals = {
   'en-US': {
     commandDesc: 'commit command for git',
+    wipDesc: 'Work in progress',
     featDesc: 'Add new features',
     fixDesc: 'Bug fix',
     styleDesc: 'Style modification, formatting, etc.',
@@ -27,6 +28,7 @@ const locals = {
   },
   'zh-CN': {
     commandDesc: 'git 提交指令',
+    wipDesc: '提交开发中的代码',
     featDesc: '添加新功能',
     fixDesc: '错误修复',
     styleDesc: '样式修改、格式化等',

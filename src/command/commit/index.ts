@@ -11,6 +11,7 @@ export default function (program: commander.Command): void {
     .alias('cm')
     .usage('commit|cm <message> [options]')
     .description(i18n.t('commandDesc'))
+    .option(`-${COMMIT_TYPES.WIP.alias}, --${COMMIT_TYPES.WIP.name} [scope]`, COMMIT_TYPES.WIP.description)
     .option(`-${COMMIT_TYPES.feat.alias}, --${COMMIT_TYPES.feat.name} [scope]`, COMMIT_TYPES.feat.description)
     .option(`-${COMMIT_TYPES.fix.alias}, --${COMMIT_TYPES.fix.name} [scope]`, COMMIT_TYPES.fix.description)
     .option(`-${COMMIT_TYPES.style.alias}, --${COMMIT_TYPES.style.name} [scope]`, COMMIT_TYPES.style.description)

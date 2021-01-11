@@ -11,6 +11,11 @@ interface CommitTypes {
 }
 
 export const COMMIT_TYPES: CommitTypes = {
+  WIP: {
+    name: 'WIP',
+    alias: 'wip',
+    description: i18n.t('wipDesc'),
+  },
   feat: {
     name: 'feat',
     alias: 'f',
@@ -19,56 +24,56 @@ export const COMMIT_TYPES: CommitTypes = {
   fix: {
     name: 'fix',
     alias: 'x',
-    description: '错误修复',
+    description: i18n.t('fixDesc'),
   },
   style: {
     name: 'style',
     alias: 's',
-    description: '样式修改、格式化等',
+    description: i18n.t('styleDesc'),
   },
   refactor: {
     name: 'refactor',
     alias: 'r',
-    description: '代码重构相关',
+    description: i18n.t('refactorDesc'),
   },
   perf: {
     name: 'perf',
     alias: 'p',
-    description: '性能优化相关',
+    description: i18n.t('perfDesc'),
   },
   test: {
     name: 'test',
     alias: 't',
-    description: '测试相关',
+    description: i18n.t('testDesc'),
   },
   docs: {
     name: 'docs',
     alias: 'd',
-    description: '文档相关',
+    description: i18n.t('docsDesc'),
   },
   merge: {
     name: 'merge',
     alias: 'mg',
-    description: '分支合并',
+    description: i18n.t('mergeDesc'),
   },
   revert: {
     name: 'revert',
     alias: 'rv',
-    description: '分支还原',
+    description: i18n.t('revertDesc'),
   },
   build: {
     name: 'build',
     alias: 'b',
-    description: '项目构建相关',
+    description: i18n.t('buildDesc'),
   },
   chore: {
     name: 'chore',
     alias: 'c',
-    description: '与构建配置相关',
+    description: i18n.t('choreDesc'),
   },
   other: {
     name: 'other',
     alias: 'o',
-    description: '其他修改',
+    description: i18n.t('otherDesc'),
   },
 }
