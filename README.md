@@ -13,47 +13,6 @@ npm i -g @meemo/biu
 你可以通过 `biu -h` 获取 biu 工具目前支持的所有脚本命令。  
 你可以通过 `biu help [command]` 获取对应指令的帮助信息。
 
-## 部署指令
-
-你可以使用 `biu deploy|dp <env>` 指令进行项目部署，其中 `env` 变量可以是 `dev | rc | prod | develop | release | production` 中的一种。具体用法如下：
-
-```shell
-biu deploy dev
-# Or
-biu dp dev
-```
-
-部署指令也支持自定义 `Tag` 的时间格式，默认为 `MMDDHHmm`。具体用法如下：
-
-```shell
-biu dp dev --date YYMMDDHHmm
-# Or
-biu dp dev -d YYMMDDHHmm
-```
-
-注：date 的时间格式内部使用 dayjs 进行格式化，因此你可以参考 [dayjs 时间格式化文档](https://dayjs.gitee.io/docs/zh-CN/display/format)。
-
-部署指令支持给部署 `Tag` 加上版本号，如 `deploys/prod/v3.4_11171033`。具体用法如下：
-
-```shell
-biu dp dev -v 3.4
-# Or
-biu dp dev -d DDHHmm -v 3.3
-```
-
-### 懒人模式
-
-懒人模式可以满足部分连 `dev` 这类指令都不想输入的"重度懒癌患者"...
-
-```
-biu dp
-```
-
-### 初始化远端仓库
-
-部分项目可能一开始没有设置 `upstream` 远端仓库，而该脚本部分指令会涉及远端数据同步，你可以通过 `biu dp --init <url>` 来初始化远端仓库。
-
-
 ## 提交指令
 
 你可以使用 `biu commit|cm <message> [options]` 指令提交符合规范的 `git message` 信息。具体用法如下:

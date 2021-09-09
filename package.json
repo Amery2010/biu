@@ -1,6 +1,6 @@
 {
   "name": "@meemo/biu",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "Biu is a script tool library for quick instructions.",
   "main": "lib/main.js",
   "sideEffects": false,
